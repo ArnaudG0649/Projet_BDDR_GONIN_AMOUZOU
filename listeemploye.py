@@ -43,6 +43,4 @@ for i in range(len(Listeemployees)):
     
 print(Table_employees_mails)
 #Voilà on a une pseudo table.
-i,j=0,0
-root.tag
-root[i][j].text
+
