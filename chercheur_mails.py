@@ -16,7 +16,7 @@ os.listdir(os.getcwd())
 class Mail() : 
     
     def __init__(self,path) : 
-        self.path=path[len(osp.join(os.getcwd(),"maildir/")):] #Chemin qui commence après le "maildir/"
+        self.path=path[len(osp.join(os.getcwd(),"maildir/"))-1:] #Chemin qui commence après le "maildir/"
          
         try : 
             with open(path,"r") as file :
@@ -86,12 +86,16 @@ def Listemail(path=osp.join(os.getcwd(),"maildir"),Table=None,pa=True): #pa=Prem
         return Table
     
     
-listemail=Listemail("/users/2024/ds1/122005148/Bureau/projet_BDDR/maildir/may-l/")  
+listemail=Listemail("/users/2024/ds1/122005148/Bureau/projet_BDDR/maildir/benson-r/")  
 for i in listemail : print(i)
+
+for i in listemail :
+    if i[-2] and i[-2].startswith("RE:"): 
+        print(i[2])
     
 Mail("/users/2024/ds1/122005148/Bureau/projet_BDDR/15.").fromm
 Mail("/users/2024/ds1/122005148/Bureau/projet_BDDR/15.").to
-Mail("/users/2024/ds1/122005148/Bureau/projet_BDDR/15.").subject
+Mail("/users/2024/ds1/122005148/Bureau/projet_BDDR/maildir/may-l/_sent_mail/32.").subject.startswith(" RE:")
 Mail("/users/2024/ds1/122005148/Bureau/projet_BDDR/15.").date
 
 Mail("/users/2024/ds1/122005148/Bureau/projet_BDDR/36.").cc
