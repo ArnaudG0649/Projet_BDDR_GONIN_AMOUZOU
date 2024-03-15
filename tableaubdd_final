@@ -34,7 +34,7 @@ Table RE {
 
 Ref: emailadress.emailadress_id  < mail.emailadress_id // one-to-many
 
-Ref: employee.employee_id > emailadress.employee_id  // one-to-one
+Ref: employee.employee_id < emailadress.employee_id  // one-to-one
 
 Ref: emailadress.emailadress_id < TO.emailadress_id // many-to-one
 
