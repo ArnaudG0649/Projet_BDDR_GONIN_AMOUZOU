@@ -1,0 +1,48 @@
+Table  employee {
+  employee_id  integer [primary key]
+  lastname varchar
+  firstname varchar
+  category varchar
+}
+
+Table mail {
+  mail_id varchar [primary key]
+  emailadress_id varchar
+  subject varchar
+  timedate timestamp
+  path     varchar
+}
+
+Table emailadress {
+  emailadress_id varchar [primary key]
+  employee_id integer
+  interne bool
+}
+Table CC {
+  mail_id varchar [primary key]
+  emailadress_id varchar [primary key]
+}
+Table TO {
+
+  emailadress_id varchar [primary key]
+  mail_id varchar [primary key]
+}
+Table RE {
+  remail_id varchar [primary key]
+  mail_id varchar
+
+}
+
+Ref: emailadress.emailadress_id  < mail.emailadress_id // one-to-many
+
+Ref: employee.employee_id < emailadress.employee_id  // one-to-one
+
+Ref: emailadress.emailadress_id < TO.emailadress_id // many-to-one
+
+Ref: mail.mail_id < CC.mail_id   //  one-to-one
+
+Ref: emailadress.emailadress_id < CC.emailadress_id // one-to-many
+
+Ref: mail.mail_id  < TO.mail_id   // one-to-many
+
+Ref: mail.mail_id < RE.mail_id   //
