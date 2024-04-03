@@ -1,29 +1,68 @@
-#!/usr/bin/env python3
+#!/bin/env python3
 
 import re
-import os 
+import os
 import os.path as osp 
 import datetime
-
 import django
+import xml.etree.ElementTree as ET
 
 #'django_extensions' ##Pour éxecuter la commande au projet
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'projetenron.settings') 
 django.setup()
 
 from app1.models import Employee,Emailadress,Mail,To,Cc,Re
-
 from django.core.exceptions import ObjectDoesNotExist
 
-os.getcwd()
-os.listdir(os.getcwd()) 
-#osp.join
-#osp.isfile(f)
-#osp.basename(os.getcwd())
 
+############ Peuplement à partir du fichier xml ############
 
-class Mailobj() : 
+if __name__=='__main__' :
+      
+    tree = ET.parse('employes_enron.xml')
+    root = tree.getroot() #=employees
     
+    root.tag #Nom de l'élément
+    
+    root.attrib
+    Listeemployees=[]
+    for employee in root:
+        L=[]
+        L.append(employee)
+        for element in employee:
+            L.append(element)
+        Listeemployees.append(L)
+#On crée un tableau d'éléments de classe etree.ElementTree.Element, ou chaque ligne (L) correspond à un employé.
+               
+    for i in range(len(Listeemployees)): #Chaque i correspond à un employé
+        L=Listeemployees[i]
+        Lemail=[e.attrib["address"] for e in L[3:-1]]
+        
+        if len(L[0].attrib)>0 : 
+            try:
+                e=Employee.objects.get(employee_id=i+1, lastname=L[1].text, firstname=L[2].text, category=L[0].attrib['category'])
+            except ObjectDoesNotExist:
+                e=Employee(employee_id=i+1, lastname=L[1].text, firstname=L[2].text, category=L[0].attrib['category'])
+                e.save()
+        else : 
+            try:
+                e=Employee.objects.get(employee_id=i+1, lastname=L[1].text, firstname=L[2].text, category=None)
+            except ObjectDoesNotExist:
+                e=Employee(employee_id=i+1, lastname=L[1].text, firstname=L[2].text, category=None)
+                e.save()
+                
+        for email_a in Lemail : 
+            try : 
+                ea=Emailadress.objects.get(employee_id=e, emailadress_id=email_a, interne=True)
+            except ObjectDoesNotExist:  
+                ea=Emailadress(employee_id=e, emailadress_id=email_a, interne=True)
+                ea.save() 
+            
+############ Peuplement à partir des mails ############
+
+class Mailobj() : #On crée une classe de mails. Les attributs des tables seront les attributs des instances de cette classe.
+#L'objectif de cette classe est de pouvoir extraire les informations importantes de chaque mail qui seront mises dans les tables.    
+
     def __init__(self,path) : 
         self.path=path[len(osp.join(os.getcwd(),"maildir/"))-1:] #Chemin qui commence après le "maildir/"
          
@@ -33,7 +72,6 @@ class Mailobj() :
         except UnicodeDecodeError :
             with open(path,"rb") as file :
                 Lignes=str(file.read()).split(r'\n')
-        #self.lignes=Lignes
         
         self.id=re.search(r"<(.*)>",Lignes[0]).group(1)
         
@@ -50,7 +88,7 @@ class Mailobj() :
         i=3
         if re.search(r"To: ([^(\n)]*)",Lignes[i]): 
             s=re.search(r"To: ([^(\n)]*)",Lignes[i]).group(1)
-            s=re.sub(r"\s",r"",s)
+            s=re.sub(r"\s",r"",s) #Pour enlever tous les séparateurs blancs et garder uniquement les virgules comme séparateurs entre les adresses.
             i+=1
             while bool(re.match(r'\t',Lignes[i])) :
                 s+=re.sub(r"\s",r"",Lignes[i])
@@ -77,10 +115,10 @@ class Mailobj() :
             self.cc=None
         
 
-def ListemailSQL(path=osp.join(os.getcwd(),"maildir")): #pa=Premier Appel
+def ListemailSQL(path=osp.join(os.getcwd(),"maildir")):
     print(path)
     for file in os.listdir(path) : 
-        if osp.isfile(osp.join(path,file)) : #C'est là qu'on collecte les données du mail
+        if osp.isfile(osp.join(path,file)) : #C'est ci_dessous que l'on collecte les données du mail
             mail=Mailobj(osp.join(path,file))
             newmail=False
             
@@ -124,120 +162,6 @@ def ListemailSQL(path=osp.join(os.getcwd(),"maildir")): #pa=Premier Appel
                             c.save()
 
         else : ListemailSQL(osp.join(path,file))
-        
-ListemailSQL()
-
-# L=[mail.id,mail.date,mail.path,mail.fromm,mail.to,mail.subject,mail.cc]
-
-# try:
-#     e=Employee.objects.get(employee_id=i+1, lastname=L[1].text, firstname=L[2].text, category=L[0].attrib['category'])
-# except ObjectDoesNotExist:
-#     e=Employee(employee_id=i+1, lastname=L[1].text, firstname=L[2].text, category=L[0].attrib['category'])
-#     e.save()
-
-
-
-
-
-# def Listemail(path=osp.join(os.getcwd(),"maildir"),Table=None,pa=True): #pa=Premier Appel
-#     print(path)
-#     if Table is None : Table=[]
-#     for file in os.listdir(path) : 
-#         if osp.isfile(osp.join(path,file)) : #C'est là qu'on collecte les données du mail
-#             mail=Mail(osp.join(path,file))
-#             L=[mail.id,mail.date,mail.path,mail.fromm,mail.to,mail.subject,mail.cc]
-#             #print(L)
-        
-        
-#             Table.append(L)
-
-#         else : Listemail(osp.join(path,file),Table,False)
-#     if pa : 
-#         return Table
-    
-    
-# listemail=Listemail()  
-
-
-# # for i in listemail : print(i)
-
-# for i in listemail :
-#     if i[-2] and i[-2].startswith("RE:"): 
-#         print(i[-2],i[2])
-    
-# Mail("/users/2024/ds1/122005148/Bureau/projet_BDDR/15.").fromm
-# Mail("/users/2024/ds1/122005148/Bureau/projet_BDDR/15.").to
-# Mail("/users/2024/ds1/122005148/Bureau/projet_BDDR/maildir/may-l/_sent_mail/32.").subject.startswith(" RE:")
-# Mail("/users/2024/ds1/122005148/Bureau/projet_BDDR/15.").date
-
-# Mail("/users/2024/ds1/122005148/Bureau/projet_BDDR/36.").cc
-
-
-# Lemailcc=[l[5] for l in listemail]
-# Lemaildate=[l[1] for l in listemail]
-# print(Lemaildate)
-# set(Lemaildate)
-
-# path="/users/2024/ds1/122005148/Bureau/projet_BDDR/15."
-# try : 
-#     with open(path,"r") as file :
-#         Lignes=[ligne for ligne in file]
-# except UnicodeDecodeError :
-#     with open(path,"rb") as file :
-#         Lignes=str(file.read()).split(r'\n')
-
-# Lmois=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
-
-# d=Lignes[1].split(" ")[1:]
-# nummois=Lmois.index(d[2])+1
-# delta=datetime.timedelta(hours=-int(d[-2][2]))
-# zone=datetime.timezone(delta)
-# dateinstance=datetime.datetime(int(d[3]), nummois, int(d[1]), hour=int(d[4][:2]), minute=int(d[4][3:5]), second=int(d[4][6:]), tzinfo=zone)
-
-#-0800 (PST)
-#-0700 (PDT)
-
-# s=re.search(r"To: ([^(\n)]*)",Lignes[3]).group(1)
-# s=re.sub(r"\s",r"",s)
-# i=4
-# while not bool(re.match(r'Subject:',Lignes[i])) :
-#     s+=re.sub(r"\s",r"",Lignes[i])
-#     i+=1
-# Lto=s.split(',')
-
-# re.search(r"([^ ]*)*",Lignes[7]).groups()
-
-
-# with open("15.","r") as file : 
-#     Lignes=[ligne for ligne in file]
-
-# Lignes
-
-# re.search(r"<(.*)>",Lignes[0]).group(1)
-
-
-# # regex=re.compile(r'')
-# # found=regex.search(ligne)
-# # found.group()
-
-# with open("/users/2024/ds1/122005148/Bureau/projet_BDDR/maildir/whalley-g/inbox/60.","rb") as file : 
-#     Lignes=str(file.read()).split(r'\n')
-# Lignes
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+     
+if __name__=='__main__': 
+    ListemailSQL()

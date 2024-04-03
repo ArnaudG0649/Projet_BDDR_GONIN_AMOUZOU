@@ -26,6 +26,10 @@ class Mail(models.Model) :
     subject=models.CharField(max_length=200,null=True)
     timedate=models.DateTimeField()
     path=models.CharField(max_length=1000)
+    def __str__(self):
+      return f"{self.mail_id} {self.emailadress_id} {self.subject} {self.timedate} {self.path}"
+    def __repr__(self):
+      return f"{self.mail_id} {self.emailadress_id} {self.subject} {self.timedate} {self.path}"
     
 class To(models.Model) : 
     emailadress_id=models.ForeignKey(Emailadress, on_delete=models.CASCADE)
