@@ -1,0 +1,5 @@
+-Lorsque le script de peuplement à partir du mailbox trouve une adresse mail issue du fichier xml, il n'efface plus l'employee_id associé.
+-Rajout de la colonne "mailbox" dans la table "employee".
+-Correction d'un bug qui faisait que le script de peuplement associait mal la variable "interne" aux mails des destinataires "to" et en copies carbones "cc".
+-Rajout du message "L'employé.e x a été rajouté.e à la base de données." lors du peuplement.
+-Le script collecte correctement les adresses de la forme "x<x@enron.com" et "x <x@enron.com>".

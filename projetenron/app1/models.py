@@ -6,10 +6,11 @@ class Employee(models.Model):
     lastname=models.CharField(max_length=100)
     firstname=models.CharField(max_length=100)
     category=models.CharField(max_length=100,null=True)
+    mailbox=models.CharField(max_length=100)
     def __str__(self):
-      return f"{self.employee_id} {self.lastname} {self.firstname} {self.category}"
+      return f"{self.employee_id} {self.lastname} {self.firstname} {self.category} {self.mailbox}"
     def __repr__(self):
-      return f"{self.employee_id} {self.lastname} {self.firstname} {self.category}"
+      return f"{self.employee_id} {self.lastname} {self.firstname} {self.category} {self.mailbox}"
   
 class Emailadress(models.Model):
     emailadress_id=models.CharField(unique=True,max_length=100,primary_key=True)

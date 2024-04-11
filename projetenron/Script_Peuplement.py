@@ -40,23 +40,26 @@ if __name__=='__main__' :
         
         if len(L[0].attrib)>0 : 
             try:
-                e=Employee.objects.get(employee_id=i+1, lastname=L[1].text, firstname=L[2].text, category=L[0].attrib['category'])
+                e=Employee.objects.get(employee_id=i+1, lastname=L[1].text, firstname=L[2].text, category=L[0].attrib['category'], mailbox=L[-1].text)
             except ObjectDoesNotExist:
-                e=Employee(employee_id=i+1, lastname=L[1].text, firstname=L[2].text, category=L[0].attrib['category'])
+                e=Employee(employee_id=i+1, lastname=L[1].text, firstname=L[2].text, category=L[0].attrib['category'], mailbox=L[-1].text)
                 e.save()
+                print(f"L'employé.e {L[2].text} {L[1].text} a été rajouté.e à la base de données.")
         else : 
             try:
-                e=Employee.objects.get(employee_id=i+1, lastname=L[1].text, firstname=L[2].text, category=None)
+                e=Employee.objects.get(employee_id=i+1, lastname=L[1].text, firstname=L[2].text, category=None, mailbox=L[-1].text)
             except ObjectDoesNotExist:
-                e=Employee(employee_id=i+1, lastname=L[1].text, firstname=L[2].text, category=None)
+                e=Employee(employee_id=i+1, lastname=L[1].text, firstname=L[2].text, category=None, mailbox=L[-1].text)
                 e.save()
+                print(f"L'employé.e {L[2].text} {L[1].text} a été rajouté.e à la base de données.")
                 
         for email_a in Lemail : 
             try : 
                 ea=Emailadress.objects.get(employee_id=e, emailadress_id=email_a, interne=True)
             except ObjectDoesNotExist:  
                 ea=Emailadress(employee_id=e, emailadress_id=email_a, interne=True)
-                ea.save() 
+                ea.save()
+
             
 ############ Peuplement à partir des mails ############
 
@@ -83,7 +86,10 @@ class Mailobj() : #On crée une classe de mails. Les attributs des tables seront
         zone=datetime.timezone(delta)
         self.date=datetime.datetime(int(d[3]), nummois, int(d[1]), hour=int(d[4][:2]), minute=int(d[4][3:5]), second=int(d[4][6:]), tzinfo=zone)
         
-        self.fromm=re.search(r"From: (\S*)",Lignes[2]).group(1)
+        if re.search(r"From: (\S*@\S*)",Lignes[2]) : 
+            self.fromm=re.search(r"From: (\S*@\S*)",Lignes[2]).group(1) 
+        elif re.search(r"From: (.*>)",Lignes[2]) : 
+            self.fromm=re.search(r"From: (.*>)",Lignes[2]).group(1) 
         
         i=3
         if re.search(r"To: ([^(\n)]*)",Lignes[i]): 
@@ -123,9 +129,9 @@ def ListemailSQL(path=osp.join(os.getcwd(),"maildir")):
             newmail=False
             
             try :  #Adresse email de l'expéditeur
-                ea=Emailadress.objects.get(employee_id=None, emailadress_id=mail.fromm, interne=mail.fromm.endswith("enron.com"))
+                ea=Emailadress.objects.get(emailadress_id=mail.fromm, interne=mail.fromm.endswith(('enron.com','enron.com>')))
             except ObjectDoesNotExist:  
-                ea=Emailadress(employee_id=None, emailadress_id=mail.fromm, interne=mail.fromm.endswith("enron.com"))
+                ea=Emailadress(employee_id=None, emailadress_id=mail.fromm, interne=mail.fromm.endswith(('enron.com','enron.com>')))
                 ea.save()
             
             try :  #Table "mail"
@@ -134,16 +140,16 @@ def ListemailSQL(path=osp.join(os.getcwd(),"maildir")):
                 newmail=True
                 m=Mail(mail_id=mail.id,emailadress_id=ea,subject=mail.subject,timedate=mail.date,path=mail.path)
                 m.save()
-                print(f"bd alimetée avec {osp.join(os.getcwd(),'maildir',mail.path)}")
+                print(f"Base de données alimentée avec {osp.join(os.getcwd(),'maildir',mail.path)}")
             
             if newmail : #Si le mail est nouveau
             
                 if mail.to : 
                     for to in mail.to : #D'abord on regarde si l'adresse de chaque destinataire est déjà enregistrée et on le fait si ce n'est pas la cas
                             try :  
-                                to=Emailadress.objects.get(employee_id=None, emailadress_id=to, interne=mail.fromm.endswith("enron.com"))
+                                to=Emailadress.objects.get(emailadress_id=to, interne=to.endswith(('enron.com','enron.com>')))
                             except ObjectDoesNotExist:  
-                                to=Emailadress(employee_id=None, emailadress_id=to, interne=mail.fromm.endswith("enron.com"))
+                                to=Emailadress(employee_id=None, emailadress_id=to, interne=to.endswith(('enron.com','enron.com>')))
                                 to.save()
                             
                             #Puis on la rajoute dans la table croisée "To"
@@ -153,9 +159,9 @@ def ListemailSQL(path=osp.join(os.getcwd(),"maildir")):
                 if mail.cc :    
                     for cc in mail.cc :
                             try : 
-                                cc=Emailadress.objects.get(employee_id=None, emailadress_id=cc, interne=mail.fromm.endswith("enron.com"))
+                                cc=Emailadress.objects.get(emailadress_id=cc, interne=cc.endswith(('enron.com','enron.com>')))
                             except ObjectDoesNotExist:  
-                                cc=Emailadress(employee_id=None, emailadress_id=cc, interne=mail.fromm.endswith("enron.com"))
+                                cc=Emailadress(employee_id=None, emailadress_id=cc, interne=cc.endswith(('enron.com','enron.com>')))
                                 cc.save()
             
                             c=Cc(emailadress_id=cc,mail_id=m)
