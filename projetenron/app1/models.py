@@ -40,7 +40,7 @@ class Cc(models.Model) :
     emailadress_id=models.ForeignKey(Emailadress, on_delete=models.CASCADE)
     mail_id=models.ForeignKey(Mail, on_delete=models.CASCADE)
     
-class Re(models.Model) :
-    remail_id=models.CharField(unique=True,max_length=200,primary_key=True)
-    mail_id=models.ForeignKey(Mail, on_delete=models.CASCADE)
+# class Re(models.Model) :
+#     remail_id=models.CharField(unique=True,max_length=200,primary_key=True)
+#     mail_id=models.ForeignKey(Mail, on_delete=models.CASCADE)
     

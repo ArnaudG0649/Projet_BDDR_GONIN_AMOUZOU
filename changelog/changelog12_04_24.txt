@@ -1,0 +1,3 @@
+-Suppression de la table Re (models.py, Script_Peuplement.py)
+-Correction de la requête n°1 pour récupérer toutes les adresses mails d'un employé à partir d'une d'entre elles. (requetes.sql)
+-Simplification  de la requête n°2 pour les mails reçu (requetes.sql)

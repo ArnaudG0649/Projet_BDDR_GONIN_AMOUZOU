@@ -11,7 +11,7 @@ import xml.etree.ElementTree as ET
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'projetenron.settings') 
 django.setup()
 
-from app1.models import Employee,Emailadress,Mail,To,Cc,Re
+from app1.models import Employee,Emailadress,Mail,To,Cc #,Re
 from django.core.exceptions import ObjectDoesNotExist
 
 
