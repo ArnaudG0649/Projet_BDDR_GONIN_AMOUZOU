@@ -1,0 +1,2 @@
+-Exemple de contrainte de date dans la deuxième requête dans le comptage du nombre de mails envoyés par employé. (requetes.sql)
+-Union des destinataires et des expéditeurs dans la troisième requête. (requetes.sql)

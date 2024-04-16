@@ -26,7 +26,7 @@ SELECT lastname,firstname,nbmail FROM
             ON emp.employee_id=ea.employee_id_id
         INNER JOIN app1_mail m 
             ON m.emailadress_id_id=ea.emailadress_id
-        /*WHERE Timedate > '2000-01-01 00:00:00'*/
+        WHERE Timedate > '2000-01-01 00:00:00'
         GROUP BY emp.employee_id
     ) T
     WHERE nbmail>100
@@ -51,7 +51,7 @@ SELECT Ti.lastname, Ti.firstname, (Ti.nbinterne + Te.nbexterne) as nbmail, Ti.nb
                 ) t0
             INNER JOIN app1_mail m /*Ensuite on joint les mails à leur expéditeurs*/
                 ON m.mail_id=t0.mail_id_id
-            WHERE  t0.interne = True 
+            WHERE  t0.interne = True AND m.Timedate > '2001-01-01 00:00:00'
         ) m
             ON m.emailadress_id_id=emp.emailadress_id
         GROUP BY emp.employee_id,emp.lastname,emp.firstname
@@ -73,7 +73,7 @@ SELECT Ti.lastname, Ti.firstname, (Ti.nbinterne + Te.nbexterne) as nbmail, Ti.nb
                 ) t0
             INNER JOIN app1_mail m 
                 ON m.mail_id=t0.mail_id_id
-            WHERE  t0.interne = False 
+            WHERE  t0.interne = False AND m.Timedate > '2001-01-01 00:00:00'
         ) m
             ON m.emailadress_id_id=emp.emailadress_id
         GROUP BY emp.employee_id,emp.lastname,emp.firstname
@@ -143,4 +143,56 @@ SELECT Ti.lastname, Ti.firstname, (Ti.nbinterne + Te.nbexterne) as nbmail, Ti.nb
     ) Te
     ON Ti.employee_id=Te.employee_id
     WHERE Ti.nbinterne + Te.nbexterne>100
+;
+
+----Requête n°3----
+
+/*Liste des employés ayant envoyé un mail à tel*/
+SELECT emp.firstname, emp.lastname
+    FROM app1_employee emp
+    INNER JOIN app1_emailadress ea ON emp.employee_id=ea.employee_id_id
+    INNER JOIN app1_mail m ON m.emailadress_id_id=ea.emailadress_id
+    INNER JOIN app1_to t ON t.mail_id_id=m.mail_id
+    INNER JOIN app1_emailadress ea2 ON ea2.emailadress_id=t.emailadress_id_id
+    INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id
+        WHERE emp2.lastname='Presto' AND emp2.firstname='Kevin' AND m.Timedate > '2000-01-01 00:00:00' 
+    GROUP BY emp.firstname, emp.lastname
+;
+
+/*Liste des employés ayant reçu un mail de un tel*/
+SELECT emp.firstname, emp.lastname
+    FROM app1_employee emp
+    INNER JOIN app1_emailadress ea ON emp.employee_id=ea.employee_id_id
+    INNER JOIN app1_to t ON t.emailadress_id_id=ea.emailadress_id
+    INNER JOIN app1_mail m ON t.mail_id_id=m.mail_id
+    INNER JOIN app1_emailadress ea2 ON ea2.emailadress_id=m.emailadress_id_id
+    INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id
+        WHERE emp2.lastname='Presto' AND emp2.firstname='Kevin' AND m.Timedate > '2000-01-01 00:00:00' 
+    GROUP BY emp.firstname, emp.lastname
+;
+
+/*Union des deux*/    
+SELECT * FROM (
+    SELECT emp.firstname, emp.lastname
+    FROM app1_employee emp
+    INNER JOIN app1_emailadress ea ON emp.employee_id=ea.employee_id_id
+    INNER JOIN app1_mail m ON m.emailadress_id_id=ea.emailadress_id
+    INNER JOIN app1_to t ON t.mail_id_id=m.mail_id
+    INNER JOIN app1_emailadress ea2 ON ea2.emailadress_id=t.emailadress_id_id
+    INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id
+        WHERE emp2.lastname='Presto' AND emp2.firstname='Kevin' AND m.Timedate > '2000-01-01 00:00:00' 
+    GROUP BY emp.firstname, emp.lastname
+    ) T1
+    UNION
+SELECT * FROM (
+    SELECT emp.firstname, emp.lastname
+    FROM app1_employee emp
+    INNER JOIN app1_emailadress ea ON emp.employee_id=ea.employee_id_id
+    INNER JOIN app1_to t ON t.emailadress_id_id=ea.emailadress_id
+    INNER JOIN app1_mail m ON t.mail_id_id=m.mail_id
+    INNER JOIN app1_emailadress ea2 ON ea2.emailadress_id=m.emailadress_id_id
+    INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id
+        WHERE emp2.lastname='Presto' AND emp2.firstname='Kevin' AND m.Timedate > '2000-01-01 00:00:00' 
+    GROUP BY emp.firstname, emp.lastname
+    ) T2
 ;
