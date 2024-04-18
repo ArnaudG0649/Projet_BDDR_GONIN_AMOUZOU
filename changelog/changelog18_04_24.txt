@@ -1,0 +1,4 @@
+-Fin de la requête n°4. (requetes.sql)
+-Fin de la partie SQL de la requête n°7. Lors de la création de l'application web cette requête sera adaptée pour pouvoir ouvrir les mails d'une discussion, et peut-être classer les mails qui se répondent. (requetes.sql)
+-Fin de la partie SQL de la requête n°5. (requetes.sql)
+-Grande avancée de la partie python de la requête n°5 (affichage d'un graphe "brute" qui représente le nombre de mails internes ou interne-externes envoyés chaque jour). (Req_5.py)

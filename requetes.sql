@@ -224,49 +224,9 @@ SELECT emp.firstname, emp.lastname, emp2.firstname as firstname_d, emp2.lastname
 ;
 
 
-
-(SELECT m.employee_id as id_destinataire, SUM(m.nbmail) as nbmail, ea.employee_id as id_expediteur FROM 
-(SELECT ea.emailadress_id, emp.employee_id FROM app1_emailadress ea
-    INNER JOIN app1_employee emp ON emp.employee_id=ea.employee_id_id
-) ea
-INNER JOIN
-(SELECT t.employee_id, COUNT(m.mail_id) AS nbmail, m.emailadress_id_id FROM app1_mail m 
-RIGHT JOIN
-    (SELECT ea2.employee_id, t.mail_id_id FROM app1_to t 
-    RIGHT JOIN
-        (SELECT ea2.emailadress_id, emp2.employee_id FROM app1_emailadress ea2
-            INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id) ea2 
-            ON ea2.emailadress_id=t.emailadress_id_id /*les adresses mails des destinataires*/
-    ) t ON t.mail_id_id=m.mail_id
-GROUP BY t.employee_id, m.emailadress_id_id
-) m ON ea.emailadress_id=m.emailadress_id_id
-GROUP BY m.employee_id,ea.employee_id
-UNION
-SELECT c.aid, c.aid*0, c.bid FROM 
-    (SELECT a.employee_id as aid, b.employee_id as bid
-    FROM app1_employee a CROSS JOIN app1_employee b
-    EXCEPT (SELECT mid, eid FROM
-        (SELECT m.employee_id as mid, SUM(m.nbmail), ea.employee_id as eid FROM 
-        (SELECT ea.emailadress_id, emp.employee_id FROM app1_emailadress ea
-            INNER JOIN app1_employee emp ON emp.employee_id=ea.employee_id_id
-        ) ea
-        INNER JOIN
-        (SELECT t.employee_id, COUNT(m.mail_id) AS nbmail, m.emailadress_id_id FROM app1_mail m 
-        RIGHT JOIN
-            (SELECT ea2.employee_id, t.mail_id_id FROM app1_to t 
-            RIGHT JOIN
-                (SELECT ea2.emailadress_id, emp2.employee_id FROM app1_emailadress ea2
-                    INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id) ea2 
-                    ON ea2.emailadress_id=t.emailadress_id_id /*les adresses mails des destinataires*/
-            ) t ON t.mail_id_id=m.mail_id
-        GROUP BY t.employee_id, m.emailadress_id_id
-        ) m ON ea.emailadress_id=m.emailadress_id_id
-        GROUP BY m.employee_id, ea.employee_id ) ea
-    ) ) c )Tdp
-;
-
-SELECT Tdp.id_expediteur as employe1, Tdp.id_destinataire as employe2, Tdp.nbmail as nbgauche_droite, Tdp2.nbmail as nbdroite_gauche FROM
-    (SELECT m.employee_id as id_destinataire, SUM(m.nbmail) as nbmail, ea.employee_id as id_expediteur FROM 
+SELECT T.employe1_id, empg.firstname as prenom1, empg.lastname as nom1, T.employe2_id, empd.firstname as prenom2, empd.lastname as nom2, T.nbgauche_droite, T.nbdroite_gauche, T.nbgauche_droite+T.nbdroite_gauche as Total FROM
+(SELECT Tdp.id_expediteur as employe1_id, Tdp.id_destinataire as employe2_id, Tdp.nbmail as nbgauche_droite, Tdp2.nbmail as nbdroite_gauche FROM
+    (SELECT m.employee_id as id_destinataire, SUM(m.nbmail) as nbmail, ea.employee_id as id_expediteur FROM /*(1) Cette sous-requête donne le nombre de mail que id_destinataire a reçus de id_expediteurs*/
     (SELECT ea.emailadress_id, emp.employee_id FROM app1_emailadress ea
         INNER JOIN app1_employee emp ON emp.employee_id=ea.employee_id_id
     ) ea
@@ -279,15 +239,16 @@ SELECT Tdp.id_expediteur as employe1, Tdp.id_destinataire as employe2, Tdp.nbmai
                 INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id) ea2 
                 ON ea2.emailadress_id=t.emailadress_id_id /*les adresses mails des destinataires*/
         ) t ON t.mail_id_id=m.mail_id
+    WHERE m.Timedate > '2001-10-01 00:00:00'
     GROUP BY t.employee_id, m.emailadress_id_id
     ) m ON ea.emailadress_id=m.emailadress_id_id
     GROUP BY m.employee_id,ea.employee_id
-    UNION
+    UNION /*On complète la table donnée avec le reste du produit cartésien des employés pour ne pas avoir de case vide lorsqu'on voudra afficher sur la même ligne les mails que l'un à envoyé à l'autre et réciproquement.*/
     SELECT c.aid, c.aid*0, c.bid FROM 
         (SELECT a.employee_id as aid, b.employee_id as bid
         FROM app1_employee a CROSS JOIN app1_employee b
-        EXCEPT (SELECT mid, eid FROM
-            (SELECT m.employee_id as mid, SUM(m.nbmail), ea.employee_id as eid FROM 
+        EXCEPT (SELECT mid, eid FROM 
+            (SELECT m.employee_id as mid, SUM(m.nbmail), ea.employee_id as eid FROM /*On refait exactement la requête (1) (jusqu'au UNION)*/
             (SELECT ea.emailadress_id, emp.employee_id FROM app1_emailadress ea
                 INNER JOIN app1_employee emp ON emp.employee_id=ea.employee_id_id
             ) ea
@@ -300,11 +261,12 @@ SELECT Tdp.id_expediteur as employe1, Tdp.id_destinataire as employe2, Tdp.nbmai
                         INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id) ea2 
                         ON ea2.emailadress_id=t.emailadress_id_id /*les adresses mails des destinataires*/
                 ) t ON t.mail_id_id=m.mail_id
+            WHERE m.Timedate > '2001-10-01 00:00:00'
             GROUP BY t.employee_id, m.emailadress_id_id
             ) m ON ea.emailadress_id=m.emailadress_id_id
             GROUP BY m.employee_id, ea.employee_id ) ea
         ) ) c )Tdp
-INNER JOIN 
+INNER JOIN /*Ensuite on refait la même chose en échangeant expediteurs et destinataires pour avoir les nombres de mails envoyés dans l'autre sens (Tdp2.nbmail)*/
     (SELECT t.employee_id as id_expediteur, SUM(t.nbmail) as nbmail, ea.employee_id as id_destinataire FROM 
     (SELECT ea.emailadress_id, emp.employee_id FROM app1_emailadress ea
         INNER JOIN app1_employee emp ON emp.employee_id=ea.employee_id_id
@@ -316,7 +278,8 @@ INNER JOIN
         RIGHT JOIN
             (SELECT ea2.emailadress_id, emp2.employee_id FROM app1_emailadress ea2
                 INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id) ea2 
-                ON ea2.emailadress_id=m.emailadress_id_id /*les adresses mails des expediteurs*/
+                ON ea2.emailadress_id=m.emailadress_id_id 
+                WHERE m.Timedate > '2001-10-01 00:00:00'
         ) m ON t.mail_id_id=m.mail_id
     GROUP BY m.employee_id, t.emailadress_id_id
     ) t ON ea.emailadress_id=t.emailadress_id_id
@@ -337,46 +300,101 @@ INNER JOIN
                 RIGHT JOIN
                     (SELECT ea2.emailadress_id, emp2.employee_id FROM app1_emailadress ea2
                         INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id) ea2 
-                        ON ea2.emailadress_id=m.emailadress_id_id /*les adresses mails des expediteurs*/
+                        ON ea2.emailadress_id=m.emailadress_id_id 
+                        WHERE m.Timedate > '2001-10-01 00:00:00'
                 ) m ON t.mail_id_id=m.mail_id
             GROUP BY m.employee_id, t.emailadress_id_id
             ) t ON ea.emailadress_id=t.emailadress_id_id
             GROUP BY t.employee_id,ea.employee_id ) ea
         ) ) c )Tdp2
 ON Tdp.id_expediteur=Tdp2.id_destinataire WHERE Tdp.id_destinataire=Tdp2.id_expediteur
-GROUP BY employe1, employe2,nbgauche_droite, nbdroite_gauche
-ORDER BY nbdroite_gauche DESC
+GROUP BY employe1_id, employe2_id, nbgauche_droite, nbdroite_gauche ) T
+INNER JOIN app1_employee empg ON empg.employee_id=T.employe1_id /*Ces deux jointures ont pour seul but de récupérer les noms et prénoms des employés à la fin*/
+INNER JOIN app1_employee empd ON empd.employee_id=T.employe2_id
+WHERE T.nbgauche_droite > 0 /* AND T.nbgauche_droite+T.nbdroite_gauche  <= 10 */
+ORDER BY T.nbgauche_droite+T.nbdroite_gauche DESC 
+;
+
+----Requête n°5----
+
+/* SELECT COUNT(mail_id) FROM */
+
+SELECT COUNT(T.mail_id) FROM (
+SELECT m.mail_id, m.subject, m.emailadress_id_id, t.dest_interne, aut.interne as exp_interne FROM app1_mail m 
+    INNER JOIN 
+    (SELECT t.mail_id_id, bool_and(ea.interne) as dest_interne FROM app1_to t
+    INNER JOIN app1_emailadress ea ON ea.emailadress_id=t.emailadress_id_id 
+    GROUP BY t.mail_id_id
+    ) t ON t.mail_id_id=m.mail_id
+    INNER JOIN app1_emailadress aut ON aut.emailadress_id=m.emailadress_id_id
+    WHERE (m.Timedate BETWEEN '2001-10-01 00:00:00' AND '2001-10-02 00:00:00') AND ((aut.interne=True AND t.dest_interne=false) OR (aut.interne=False AND t.dest_interne=True)) /*OU exclusive, au soit le destinataire ou soit l'expéditeur est interne mais pas les deux*/
+) T
+;
+
+SELECT COUNT(T.mail_id) FROM (
+SELECT m.mail_id, m.subject, m.emailadress_id_id, t.dest_interne, aut.interne as exp_interne FROM app1_mail m 
+    INNER JOIN 
+    (SELECT t.mail_id_id, bool_and(ea.interne) as dest_interne FROM app1_to t
+    INNER JOIN app1_emailadress ea ON ea.emailadress_id=t.emailadress_id_id 
+    GROUP BY t.mail_id_id
+    ) t ON t.mail_id_id=m.mail_id
+    INNER JOIN app1_emailadress aut ON aut.emailadress_id=m.emailadress_id_id
+    WHERE (m.Timedate BETWEEN '2001-10-01 00:00:00' AND '2001-10-02 00:00:00') AND (aut.interne=True AND t.dest_interne=True) 
+) T
 ;
 
 
 
-SELECT t.employee_id as id_expediteur, SUM(t.nbmail) as nbmail, ea.employee_id as id_destinataire FROM 
-(SELECT ea.emailadress_id, emp.employee_id FROM app1_emailadress ea
-    INNER JOIN app1_employee emp ON emp.employee_id=ea.employee_id_id
-) ea
-INNER JOIN
-(SELECT m.employee_id, COUNT(m.mail_id) AS nbmail, t.emailadress_id_id FROM app1_to t 
-RIGHT JOIN
-    (SELECT ea2.employee_id, m.mail_id FROM app1_mail m 
-    RIGHT JOIN
-        (SELECT ea2.emailadress_id, emp2.employee_id FROM app1_emailadress ea2
-            INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id) ea2 
-            ON ea2.emailadress_id=m.emailadress_id_id /*les adresses mails des expediteurs*/
-    ) m ON t.mail_id_id=m.mail_id
-GROUP BY m.employee_id, t.emailadress_id_id
-) t ON ea.emailadress_id=t.emailadress_id_id
-GROUP BY t.employee_id,ea.employee_id
-ORDER BY nbmail DESC
-
-
-
-SELECT ea2.employee_id FROM app1_mail m 
-    RIGHT JOIN
-        (SELECT ea2.emailadress_id, emp2.employee_id FROM app1_emailadress ea2
-            INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id) ea2 
-            ON ea2.emailadress_id=m.emailadress_id_id 
-GROUP BY ea2.employee_id
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----Requête n°7----
+
+/*On considérera une discussion comme l'ensemble des mails que deux employés se sont échangés, éventuellement restreint à une période donnée.*/
+SELECT T.mail_id, T.subject, T.path, T.Timedate, T.Prenom_expediteur, T.Nom_expediteur FROM
+(SELECT m.mail_id, m.subject, m.path, m.Timedate, empexp.firstname as Prenom_expediteur, empexp.lastname as Nom_expediteur FROM
+    (SELECT ea.emailadress_id, emp.firstname, emp.lastname FROM app1_employee emp 
+    INNER JOIN app1_emailadress ea ON emp.employee_id=ea.employee_id_id
+    WHERE emp.firstname='Patrice' AND emp.lastname='Mims') empexp 
+    INNER JOIN app1_mail m ON m.emailadress_id_id=empexp.emailadress_id
+    INNER JOIN app1_to t ON t.mail_id_id=m.mail_id 
+    INNER JOIN
+    (SELECT ea.emailadress_id FROM app1_employee emp 
+    INNER JOIN app1_emailadress ea ON emp.employee_id=ea.employee_id_id
+    WHERE emp.firstname='Debra' AND emp.lastname='Perlingiere') empdest ON empdest.emailadress_id=t.emailadress_id_id
+UNION
+SELECT m.mail_id, m.subject, m.path, m.Timedate, empexp.firstname as Prenom_expediteur, empexp.lastname as Nom_expediteur FROM
+    (SELECT ea.emailadress_id, emp.firstname, emp.lastname FROM app1_employee emp 
+    INNER JOIN app1_emailadress ea ON emp.employee_id=ea.employee_id_id
+    WHERE emp.firstname='Debra' AND emp.lastname='Perlingiere') empexp 
+    INNER JOIN app1_mail m ON m.emailadress_id_id=empexp.emailadress_id
+    INNER JOIN app1_to t ON t.mail_id_id=m.mail_id 
+    INNER JOIN
+    (SELECT ea.emailadress_id FROM app1_employee emp 
+    INNER JOIN app1_emailadress ea ON emp.employee_id=ea.employee_id_id
+    WHERE emp.firstname='Patrice' AND emp.lastname='Mims') empdest ON empdest.emailadress_id=t.emailadress_id_id
+) T
+WHERE T.Timedate > '2001-10-01 00:00:00'
+ORDER BY Timedate 
+;
