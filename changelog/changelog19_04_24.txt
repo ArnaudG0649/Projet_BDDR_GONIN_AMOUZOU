@@ -1,0 +1,2 @@
+-Fin de la partie python de la requête n°5. Des modifications pour la personnalisation de cette requête pourront être apportées dans le futur si nécessaires. (Req_5.py)
+-Fin de la partie python et SQL de la requête n°6. Le code python marche et donne la liste des mails contenant les mots clés dans un fichier csv crée. Cependant une optimisation du programme pourra éventuellement être envisagée. (Req_6.py, requete.sql)

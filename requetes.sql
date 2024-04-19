@@ -96,7 +96,7 @@ SELECT lastname,firstname,nbmail FROM
         WHERE Timedate > '2000-01-01 00:00:00'
         GROUP BY emp.employee_id
     ) T
-    WHERE nbmail>10
+    WHERE nbmail>100
 ;
 
 ----version où l'on peut filtrer les expéditeurs internes ou externes---- 
@@ -345,6 +345,31 @@ SELECT m.mail_id, m.subject, m.emailadress_id_id, t.dest_interne, aut.interne as
 
 
 
+----Requête n°6----
+
+SELECT m.path, m.emailadress_id_id as auteur, m.subject, m.timedate FROM app1_mail m
+    LEFT JOIN 
+    (SELECT ea.emailadress_id, ea.interne, emp.firstname, emp.lastname FROM app1_emailadress ea /*Cette sous-requête récupère tout ce qui concerne les auteurs*/
+        LEFT JOIN app1_employee emp ON emp.employee_id=ea.employee_id_id) aut 
+    ON aut.emailadress_id=m.emailadress_id_id
+    LEFT JOIN 
+    (SELECT t.mail_id_id, bool_and(ea2.interne) as interne FROM app1_to t /*Cette sous-requête permet de dire si un mail a été envoyé qu'à des destinataires internes ou s'il y a un destinataires externes dans le mail*/
+        INNER JOIN app1_emailadress ea2 
+            ON t.emailadress_id_id=ea2.emailadress_id 
+        GROUP BY t.mail_id_id ) dint 
+    ON m.mail_id=dint.mail_id_id
+    LEFT JOIN
+    (SELECT t.mail_id_id, t.emailadress_id_id, eadest.firstname, eadest.lastname FROM app1_to t /*Cette sous-requête récupère tout ce qui concerne les destinataires*/
+        LEFT JOIN 
+        (SELECT ea.emailadress_id, emp.firstname, emp.lastname FROM app1_emailadress ea 
+            LEFT JOIN app1_employee emp ON emp.employee_id=ea.employee_id_id) eadest
+        ON t.emailadress_id_id=eadest.emailadress_id ) dest 
+    ON m.mail_id=dest.mail_id_id
+    WHERE m.Timedate > '2000-01-01' AND dest.firstname='Jeff' AND dest.lastname='King' AND aut.interne=False /*Ensuite on filtre ce qu'on veut*/
+GROUP BY m.path, m.emailadress_id_id, m.subject, m.timedate 
+;
+        
+                
 
 
 
@@ -354,13 +379,18 @@ SELECT m.mail_id, m.subject, m.emailadress_id_id, t.dest_interne, aut.interne as
 
 
 
+    INNER JOIN app1_to t ON t.mail_id_id=m.mail_id
+    INNER JOIN app1_emailadress eadest ON eadest.emailadress_id=t.emailadress_id_id
+    INNER JOIN app1_emailadress ea2 ON ea2.emailadress_id=t.emailadress_id_id
+    INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id
+    WHERE m.Timedate > '2001-01-01' AND t.emailadress_id_id='laurie.ellis@enron.com' AND aut.interne=True 
+GROUP BY m.path, m.emailadress_id_id, m.subject, m.timedate
+;
+/*!! Ne pas faire d'inner join inutile sinon ça supprime les mails nécessaires de la table*/
 
-
-
-
-
-
-
+SELECT m.path, m.emailadress_id_id as auteur, m.subject, m.timedate FROM app1_mail m
+    WHERE m.mail_id='711760.1075858202707.JavaMail.evans@thyme'
+;
 
 
 
