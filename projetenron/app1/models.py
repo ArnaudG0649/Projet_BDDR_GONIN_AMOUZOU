@@ -13,7 +13,7 @@ class Employee(models.Model):
       return f"{self.employee_id} {self.lastname} {self.firstname} {self.category} {self.mailbox}"
   
 class Emailadress(models.Model):
-    emailadress_id=models.CharField(unique=True,max_length=100,primary_key=True)
+    emailadress_id=models.CharField(unique=True,max_length=200,primary_key=True)
     employee_id=models.ForeignKey(Employee, on_delete=models.CASCADE,null=True)
     interne=models.BooleanField()
     def __str__(self):

@@ -121,12 +121,14 @@ class Mailobj() : #On crée une classe de mails. Les attributs des tables seront
             self.cc=None
         
 
-def ListemailSQL(path=osp.join(os.getcwd(),"maildir")):
+def ListemailSQL(path=osp.join(os.getcwd(),"maildir"),i=[0]):
     print(path)
     for file in os.listdir(path) : 
         if osp.isfile(osp.join(path,file)) : #C'est ci_dessous que l'on collecte les données du mail
             mail=Mailobj(osp.join(path,file))
             newmail=False
+            i[0]+=1
+            print(f"{osp.join(os.getcwd(),'maildir',mail.path)}")
             
             try :  #Adresse email de l'expéditeur
                 ea=Emailadress.objects.get(emailadress_id=mail.fromm, interne=mail.fromm.endswith(('enron.com','enron.com>')))
@@ -140,7 +142,8 @@ def ListemailSQL(path=osp.join(os.getcwd(),"maildir")):
                 newmail=True
                 m=Mail(mail_id=mail.id,emailadress_id=ea,subject=mail.subject,timedate=mail.date,path=mail.path)
                 m.save()
-                print(f"Base de données alimentée avec {osp.join(os.getcwd(),'maildir',mail.path)}")
+                
+                print(f"({i}) Base de données alimentée avec {osp.join(os.getcwd(),'maildir',mail.path)}")
             
             if newmail : #Si le mail est nouveau
             
@@ -167,7 +170,7 @@ def ListemailSQL(path=osp.join(os.getcwd(),"maildir")):
                             c=Cc(emailadress_id=cc,mail_id=m)
                             c.save()
 
-        else : ListemailSQL(osp.join(path,file))
+        else : ListemailSQL(osp.join(path,file),i)
      
 if __name__=='__main__': 
     ListemailSQL()
