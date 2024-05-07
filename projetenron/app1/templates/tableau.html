@@ -34,11 +34,7 @@
         {% for row in L %}
           <tr>
           {% for j in row %}
-            {% if forloop.counter == p %}
-              <td> <a href="http://127.0.0.1:7000/app1/maildir{{j}}">{{j}}</a></td>
-            {% else %}
             <td>{{j}}</td>
-            {% endif %}
           {% endfor %}
           </tr>
         {% endfor %}

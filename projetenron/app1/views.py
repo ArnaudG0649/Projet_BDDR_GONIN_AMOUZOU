@@ -4,7 +4,7 @@ import pandas as pds
 import numpy as np
 import os
 import os.path as osp
-
+from importlib import import_module
 
 import os
 import django
@@ -43,18 +43,33 @@ def extableau(request) :
     return(tableau(request,famille))
     
     
-def extableau2(request) :
-    tableau=pds.read_csv("recherchemot.csv",index_col=(0))
-    nrow=tableau.shape[0]
-    M=np.asarray(tableau)
-    ntableau=[[tableau.index[i]]+list(M[i,:]) for i in range(nrow)]
-    return render(request,'extableau2.html',
-        {
-            'index' : tableau.index,
-            'columns' : tableau.columns,
-            'L' : ntableau
-                  })
-    
+# def extableau2(request) :
+#     tableau=pds.read_csv("recherchemot.csv",index_col=(0))
+#     p=list(tableau.columns).index('path')+2 #rang de la colonne "path"
+#     nrow=tableau.shape[0]
+#     M=np.asarray(tableau)
+#     ntableau=[[tableau.index[i]]+list(M[i,:]) for i in range(nrow)]
+#     return render(request,'extableau2.html',
+#         {
+#             'index' : tableau.index,
+#             'columns' : tableau.columns,
+#             'L' : ntableau,
+#             'p' : p
+#                   })
+
+
+from app1.requetes.reqtest import extableau2
+
+def vextableau2(request) :
+    return extableau2(request)
+
+from app1.requetes.Req_1 import req1
+
+def vreq1(request) :
+    return req1(request)
+
+
+
 def ouvmail(request,capture) : 
     response = HttpResponse()
     path=osp.join(os.getcwd(),'..',capture)

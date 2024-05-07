@@ -1,0 +1,3 @@
+-Pour les tables où il y a une colonne "path", mise en place de quelque codes permettant de la reconnaitre et d'ainsi mettre automatiquement en url les chemins des mails sur la tableau des résultats dans la page internet. (ex pour extableau2 dans les vues)
+-Les vues des requêtes seront écrites dans le dossier "requetes", chacun dans un fichier python différent pour éviter de mettre trop de codes dans les fichiers views.py.
+-Ébauche de la vue et de l'url de la première requête.
