@@ -1,0 +1,72 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html>
+
+  <!-- Les meta-donnees -->
+  <head>
+    <meta charset="utf-8">
+    <title>Le titre</title>
+    <!--<link rel="stylesheet" href="site.css"> -->
+    <link rel="stylesheet" href="{% static 'monappli/site.css' %}">
+
+    <style>  
+      table.mon_tableau  {
+          border-collapse: collapse;
+      }
+    </style>
+  </head>
+
+    <body>
+        
+
+    <form method="POST" action="URL_de_reception">{% csrf_token %}
+        <!--<p>
+            saisie d'un petit texte : <input type="text" name="mon_texte" />
+        </p>
+        
+        <p>
+            saisie d'un texte multi-ligne : <textarea name="mes_lignes"></textarea>
+        </p>-->
+        <p>
+            saisie d'une date : <input type="date" name="ma_date"/>
+        </p>
+        <p><!--
+            saisie d'un entier : <input type="number" name="mon entier">
+        </p>
+        <p>
+            case à cocher : <input type="checkbox" name="ma_case">
+        </p>
+        <div class="bouton">
+            bouton :
+            <div>bouton 1 <input type="radio" name="mes_boutons_ronds" value="1"></div>
+            <div>bouton 2 <input type="radio" name="mes_boutons_ronds" value="1"></div>
+        </div>
+        <p>
+            liste déroulante :
+            <select name="pays">
+                <option value="espagne">Espagne</option>
+                <option value="royaume-uni">Royaume-Uni</option>
+                <option value="canada">Canada</option>
+                <option value="japon">Japon</option>
+            </select>
+        </p>
+        <p>
+            liste :
+                <select name="pays2" size="4">
+                    <option value="espagne">Espagne</option>
+                    <option value="royaume-uni">Royaume-Uni</option>
+                    <option value="canada">Canada</option>
+                    <option value="japon">Japon</option>
+                </select>
+            </p>-->
+        
+        <div class="envoi"><input type="submit"></div>
+    </form> 
+    
+    
+    </body>
+</html>
+  
+   

@@ -1,0 +1,38 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html>
+
+  <!-- Les meta-donnees -->
+  <head>
+    <meta charset="utf-8">
+    <title>Le titre</title>
+    <!--<link rel="stylesheet" href="site.css"> -->
+    <link rel="stylesheet" href="{% static 'monappli/site.css' %}">
+
+    <style>  
+      table.mon_tableau  {
+          border-collapse: collapse;
+      }
+    </style>
+  </head>
+
+    <body>
+        
+
+    <form method="POST" action="req1employee">{% csrf_token %}
+        <p>
+            nom : <input type="text" name="nom" />
+        </p>
+        <p>
+            prénom : <input type="text" name="prenom" />
+        </p>
+        <div class="envoi"><input type="submit"></div>
+    </form> 
+    
+    
+    </body>
+</html>
+  
+   

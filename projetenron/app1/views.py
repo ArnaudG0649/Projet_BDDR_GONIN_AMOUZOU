@@ -63,12 +63,37 @@ from app1.requetes.reqtest import extableau2
 def vextableau2(request) :
     return extableau2(request)
 
+
+#### Requête 1 ####
+
 from app1.requetes.Req_1 import req1
 
-def vreq1(request) :
-    return req1(request)
+def form1(request) :
+    return render(request,'req1/form1.html')
+
+def form1bis(request) : 
+    rP=request.POST
+    print(rP['rep1'])
+    if rP['rep1']=='0' : return req1(request,'allemployee')
+    if rP['rep1']=='1' : return render(request,'req1/form1employee.html')
+    if rP['rep1']=='2' : return render(request,'req1/form1adresse.html')
+    
+def req1employee(request) : return req1(request,'byauthor')    
+def req1am(request) : return req1(request)  
+    
+
+#### Requête 2 ####
+
+from app1.requetes.Req_2 import req2
 
 
+
+
+
+
+
+
+#### Ouvreur de mail ####
 
 def ouvmail(request,capture) : 
     response = HttpResponse()
@@ -84,7 +109,17 @@ def ouvmail(request,capture) :
                 response.write('<p>'+ligne+'</p>')
     return response
     
+#### Test pour les formulaires ####
+def form(request) : 
+    return render(request,'form.html')
 
-    
+def URL_de_reception(request) : 
+    rP=request.POST
+    print(rP)
+    print(type(rP['ma_date']))
+    response = HttpResponse()
+    response.write(f"<p>{rP}</p>")
+    return response
+
 
 

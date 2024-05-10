@@ -15,40 +15,97 @@ from django.shortcuts import render
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'projetenron.settings') 
 django.setup()
 
-bymail=False
-byauthor=True
-prenom='Mark'
-nom='Taylor'
-
-
 
 from app1.models import Employee,Emailadress,Mail,To,Cc #,Re
 from django.core.exceptions import ObjectDoesNotExist
 
 from django.db import connection
 
-def req1(request) :
-    if byauthor :
+def req1(request,typerep='') :
+    rP=request.POST
+    print(typerep)
+        
+    if typerep=='allemployee' : 
         with connection.cursor() as cursor:
             cursor.execute(
             """
-            SELECT *
+            SELECT e.employee_id, e.lastname, e.firstname, e.category, e.mailbox, string_agg(ea.emailadress_id,' ; ')
+            FROM app1_employee e
+            INNER JOIN app1_emailadress ea
+                ON e.employee_id=ea.employee_id_id
+            GROUP BY e.employee_id, e.lastname, e.firstname, e.category, e.mailbox
+            """)
+            result=cursor.fetchall()
+            columns = ['identifiant','nom','prénom','catégorie','boite mail', 'adresses mail'] 
+            
+        tableau=pds.DataFrame(result,columns=columns)
+        tableau['catégorie'].fillna('Inconnue',inplace=True)
+        
+        nrow=tableau.shape[0]
+        M=np.asarray(tableau)
+        ntableau=[list(M[i,:]) for i in range(nrow)]
+        return render(request,'tableau.html',
+            {
+                'columns' : tableau.columns,
+                'L' : ntableau,
+                      })
+    
+    elif typerep =='byauthor' :
+        prenom,nom=rP['prenom'],rP['nom']
+        with connection.cursor() as cursor:
+            cursor.execute(
+            """
+            SELECT e.employee_id, e.lastname, e.firstname, e.category, e.mailbox, string_agg(ea.emailadress_id,' ; ')
             FROM app1_employee e
             INNER JOIN app1_emailadress ea
                 ON e.employee_id=ea.employee_id_id
             WHERE e.lastname=%s AND e.firstname=%s
+            GROUP BY e.employee_id, e.lastname, e.firstname, e.category, e.mailbox
             """,[nom,prenom])
             result=cursor.fetchall()
-            columns = [col[0] for col in cursor.description] 
+            columns = ['identifiant','nom','prénom','catégorie','boite mail', 'adresses mail'] 
             
         tableau=pds.DataFrame(result,columns=columns)
+        tableau['catégorie'].fillna('Inconnue',inplace=True)
         
-    nrow=tableau.shape[0]
-    M=np.asarray(tableau)
-    ntableau=[[tableau.index[i]]+list(M[i,:]) for i in range(nrow)]
-    return render(request,'tableau.html',
-        {
-            'index' : tableau.index,
-            'columns' : tableau.columns,
-            'L' : ntableau,
-                  })
+        nrow=tableau.shape[0]
+        M=np.asarray(tableau)
+        ntableau=[list(M[i,:]) for i in range(nrow)]
+        return render(request,'tableau.html',
+            {
+                'columns' : tableau.columns,
+                'L' : ntableau,
+                      })
+
+    else : 
+        adresse=rP['adresse']
+        with connection.cursor() as cursor:
+            cursor.execute(
+            """
+            SELECT  e.employee_id, e.lastname , e.firstname , e.category, e.mailbox, string_agg(ea.emailadress_id,' ; ')
+            FROM (SELECT * 
+                FROM app1_employee e
+                INNER JOIN app1_emailadress ea
+                    ON e.employee_id=ea.employee_id_id
+                WHERE ea.emailadress_id=%s) e
+            INNER JOIN app1_emailadress ea 
+                ON e.employee_id=ea.employee_id_id
+            GROUP BY e.employee_id, e.firstname, e.lastname , e.category, e.mailbox
+            """,[adresse])
+            result=cursor.fetchall()
+            columns = ['identifiant','nom','prénom','catégorie','boite mail', 'adresses mail'] 
+            
+        tableau=pds.DataFrame(result,columns=columns)
+        tableau['catégorie'].fillna('Inconnue',inplace=True)
+        
+        nrow=tableau.shape[0]
+        M=np.asarray(tableau)
+        ntableau=[list(M[i,:]) for i in range(nrow)]
+        return render(request,'tableau.html',
+            {
+                'columns' : tableau.columns,
+                'L' : ntableau,
+                      })
+
+
+

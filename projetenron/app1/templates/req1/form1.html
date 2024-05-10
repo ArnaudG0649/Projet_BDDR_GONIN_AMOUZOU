@@ -1,0 +1,40 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html>
+
+  <!-- Les meta-donnees -->
+  <head>
+    <meta charset="utf-8">
+    <title>Le titre</title>
+    <!--<link rel="stylesheet" href="site.css"> -->
+    <link rel="stylesheet" href="{% static 'monappli/site.css' %}">
+
+    <style>  
+      table.mon_tableau  {
+          border-collapse: collapse;
+      }
+    </style>
+  </head>
+
+    <body>
+        
+
+    <form method="POST" action="form1bis">{% csrf_token %}
+        <div class="bouton">
+            bouton :
+            <div>Tous les employés<input type="radio" name="rep1" value="0"></div>
+            <div>Par employé(e) <input type="radio" name="rep1" value="1"></div>
+            <div>Par adresse mail <input type="radio" name="rep1" value="2"></div>
+        </div>
+
+
+        <div class="envoi"><input type="submit"></div>
+    </form> 
+    
+    
+    </body>
+</html>
+  
+   

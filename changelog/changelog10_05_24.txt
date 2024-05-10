@@ -1,0 +1,3 @@
+-Fin de l'implementation de la requête n°1 sur l'application web (On peut tester avec .../app1/form1). Les noms des pages seront revus.
+-Approfondissement de la requête n°2 dans le fichier sql req2.sql. Le but est de permettre de compter les mails envoyés et reçus dans les mêmes tableaux tout en filtrant les cas d'échanges internes et internes-externes.
+-Début de la programmation de la vue de la requête n°2 (app1/requetes/Req_2.py)
