@@ -83,14 +83,24 @@ def req1am(request) : return req1(request)
     
 
 #### Requête 2 ####
+def form2(request) :
+    return render(request,'form2.html')
 
 from app1.requetes.Req_2 import req2
 
 
+#### Requête 3 ####
+def form3(request) :
+    return render(request,'form3.html')
+
+from app1.requetes.Req_3 import req3
 
 
+#### Requête 4 ####
+def form4(request) :
+    return render(request,'form4.html')
 
-
+from app1.requetes.Req_4 import req4
 
 
 #### Ouvreur de mail ####
@@ -115,8 +125,7 @@ def form(request) :
 
 def URL_de_reception(request) : 
     rP=request.POST
-    print(rP)
-    print(type(rP['ma_date']))
+    print("Mathieu" in rP)
     response = HttpResponse()
     response.write(f"<p>{rP}</p>")
     return response

@@ -6,6 +6,16 @@ INNER JOIN app1_emailadress ea
 WHERE e.lastname='Taylor' AND e.firstname='Mark'
 ;
 
+
+SELECT e.employee_id, e.lastname, e.firstname, e.category, e.mailbox, string_agg(ea.emailadress_id,' ; ') /*Version où l'on concatène les adresses mails*/
+FROM app1_employee e
+INNER JOIN app1_emailadress ea
+    ON e.employee_id=ea.employee_id_id
+WHERE e.lastname='Taylor' AND e.firstname='Mark'
+GROUP BY e.employee_id, e.lastname, e.firstname, e.category, e.mailbox
+;
+
+
 SELECT e.firstname , e.lastname , e.category, e.mailbox, ea.emailadress_id
 FROM (SELECT * /*Cette sous-requête a pour but de récupérer l'id de l'employé à partir de l'adresse mail*/
     FROM app1_employee e
@@ -14,6 +24,18 @@ FROM (SELECT * /*Cette sous-requête a pour but de récupérer l'id de l'employ�
     WHERE ea.emailadress_id='elizabeth.sager@enron.com') e
 INNER JOIN app1_emailadress ea /*Puis ce join permet de récupérer toutes ces autres adresses mails*/
     ON e.employee_id=ea.employee_id_id
+;
+
+
+SELECT e.firstname , e.lastname , e.category, e.mailbox, string_agg(ea.emailadress_id,' ; ') /*Version où l'on concatène les adresses mails*/
+FROM (SELECT * /*Cette sous-requête a pour but de récupérer l'id de l'employé à partir de l'adresse mail*/
+    FROM app1_employee e
+    INNER JOIN app1_emailadress ea
+        ON e.employee_id=ea.employee_id_id
+    WHERE ea.emailadress_id='elizabeth.sager@enron.com') e
+INNER JOIN app1_emailadress ea /*Puis ce join permet de récupérer toutes ces autres adresses mails*/
+    ON e.employee_id=ea.employee_id_id
+GROUP BY e.firstname, e.lastname , e.category, e.mailbox
 ;
 
 ----Requête n°2----
@@ -155,8 +177,9 @@ SELECT emp.firstname, emp.lastname
     INNER JOIN app1_to t ON t.mail_id_id=m.mail_id
     INNER JOIN app1_emailadress ea2 ON ea2.emailadress_id=t.emailadress_id_id
     INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id
-        WHERE emp2.lastname='Presto' AND emp2.firstname='Kevin' AND m.Timedate > '2000-01-01 00:00:00' 
+        WHERE emp2.lastname='Presto' AND emp2.firstname='Kevin' AND ( m.Timedate BETWEEN '2000-01-01 00:00:00' AND '2100-01-01 00:00:00')
     GROUP BY emp.firstname, emp.lastname
+    ORDER BY lastname
 ;
 
 /*Liste des employés ayant reçu un mail de un tel*/
@@ -167,8 +190,9 @@ SELECT emp.firstname, emp.lastname
     INNER JOIN app1_mail m ON t.mail_id_id=m.mail_id
     INNER JOIN app1_emailadress ea2 ON ea2.emailadress_id=m.emailadress_id_id
     INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id
-        WHERE emp2.lastname='Presto' AND emp2.firstname='Kevin' AND m.Timedate > '2000-01-01 00:00:00' 
+        WHERE emp2.lastname='Presto' AND emp2.firstname='Kevin' AND ( m.Timedate BETWEEN '2000-01-01 00:00:00' AND '2100-01-01 00:00:00') 
     GROUP BY emp.firstname, emp.lastname
+    ORDER BY lastname
 ;
 
 /*Union des deux*/    
@@ -180,7 +204,7 @@ SELECT * FROM (
     INNER JOIN app1_to t ON t.mail_id_id=m.mail_id
     INNER JOIN app1_emailadress ea2 ON ea2.emailadress_id=t.emailadress_id_id
     INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id
-        WHERE emp2.lastname='Presto' AND emp2.firstname='Kevin' AND m.Timedate > '2000-01-01 00:00:00' 
+        WHERE emp2.lastname='Presto' AND emp2.firstname='Kevin' AND ( m.Timedate BETWEEN '2000-01-01 00:00:00' AND '2100-01-01 00:00:00' ) 
     GROUP BY emp.firstname, emp.lastname
     ) T1
     UNION
@@ -192,14 +216,15 @@ SELECT * FROM (
     INNER JOIN app1_mail m ON t.mail_id_id=m.mail_id
     INNER JOIN app1_emailadress ea2 ON ea2.emailadress_id=m.emailadress_id_id
     INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id
-        WHERE emp2.lastname='Presto' AND emp2.firstname='Kevin' AND m.Timedate > '2000-01-01 00:00:00' 
+        WHERE emp2.lastname='Presto' AND emp2.firstname='Kevin' AND ( m.Timedate BETWEEN '2000-01-01 00:00:00' AND '2100-01-01 00:00:00') 
     GROUP BY emp.firstname, emp.lastname
     ) T2
+    ORDER BY lastname
 ;
 
 
 ----Requête n°4----
-
+SELECT * FROM (
 SELECT emp.firstname, emp.lastname, emp2.firstname as firstname_d, emp2.lastname as lastname_d, COUNT(m.mail_id) as nbmail /*Cette requête compte le nombre de mails que l'employé de gauche à envoyé à l'employé de droite*/
     FROM app1_employee emp
     INNER JOIN app1_emailadress ea ON emp.employee_id=ea.employee_id_id
@@ -207,11 +232,13 @@ SELECT emp.firstname, emp.lastname, emp2.firstname as firstname_d, emp2.lastname
     INNER JOIN app1_to t ON t.mail_id_id=m.mail_id
     INNER JOIN app1_emailadress ea2 ON ea2.emailadress_id=t.emailadress_id_id
     INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id
-    WHERE m.Timedate > '2000-01-01 00:00:00'
-GROUP BY emp.firstname, emp.lastname, emp2.firstname, emp2.lastname 
+        WHERE ( m.Timedate BETWEEN '2000-01-01 00:00:00' AND '2100-01-01 00:00:00')
+    GROUP BY emp.firstname, emp.lastname, emp2.firstname, emp2.lastname 
+    ORDER BY COUNT(m.mail_id) DESC ) T
+    WHERE T.nbmail >= 600
 ;
 
-
+SELECT * FROM (
 SELECT emp.firstname, emp.lastname, emp2.firstname as firstname_d, emp2.lastname as lastname_d, COUNT(m.mail_id) as nbmail /*Cette requête compte le nombre de mails que l'employé de droite à envoyé à l'employé de gauche*/
     FROM app1_employee emp
     INNER JOIN app1_emailadress ea ON emp.employee_id=ea.employee_id_id
@@ -219,8 +246,10 @@ SELECT emp.firstname, emp.lastname, emp2.firstname as firstname_d, emp2.lastname
     INNER JOIN app1_mail m ON t.mail_id_id=m.mail_id
     INNER JOIN app1_emailadress ea2 ON ea2.emailadress_id=m.emailadress_id_id
     INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id
-        WHERE m.Timedate > '2000-01-01 00:00:00' 
+        WHERE ( m.Timedate BETWEEN '2000-01-01 00:00:00' AND '2100-01-01 00:00:00')
     GROUP BY emp.firstname, emp.lastname, emp2.firstname, emp2.lastname
+    ORDER BY COUNT(m.mail_id) DESC ) T
+    WHERE T.nbmail >= 600       
 ;
 
 
@@ -239,7 +268,7 @@ SELECT T.employe1_id, empg.firstname as prenom1, empg.lastname as nom1, T.employ
                 INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id) ea2 
                 ON ea2.emailadress_id=t.emailadress_id_id /*les adresses mails des destinataires*/
         ) t ON t.mail_id_id=m.mail_id
-    WHERE m.Timedate > '2001-10-01 00:00:00'
+    WHERE ( m.Timedate BETWEEN '2000-01-01 00:00:00' AND '2100-01-01 00:00:00')
     GROUP BY t.employee_id, m.emailadress_id_id
     ) m ON ea.emailadress_id=m.emailadress_id_id
     GROUP BY m.employee_id,ea.employee_id
@@ -261,7 +290,7 @@ SELECT T.employe1_id, empg.firstname as prenom1, empg.lastname as nom1, T.employ
                         INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id) ea2 
                         ON ea2.emailadress_id=t.emailadress_id_id /*les adresses mails des destinataires*/
                 ) t ON t.mail_id_id=m.mail_id
-            WHERE m.Timedate > '2001-10-01 00:00:00'
+            WHERE ( m.Timedate BETWEEN '2000-01-01 00:00:00' AND '2100-01-01 00:00:00')
             GROUP BY t.employee_id, m.emailadress_id_id
             ) m ON ea.emailadress_id=m.emailadress_id_id
             GROUP BY m.employee_id, ea.employee_id ) ea
@@ -279,7 +308,7 @@ INNER JOIN /*Ensuite on refait la même chose en échangeant expediteurs et dest
             (SELECT ea2.emailadress_id, emp2.employee_id FROM app1_emailadress ea2
                 INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id) ea2 
                 ON ea2.emailadress_id=m.emailadress_id_id 
-                WHERE m.Timedate > '2001-10-01 00:00:00'
+                WHERE ( m.Timedate BETWEEN '2000-01-01 00:00:00' AND '2100-01-01 00:00:00')
         ) m ON t.mail_id_id=m.mail_id
     GROUP BY m.employee_id, t.emailadress_id_id
     ) t ON ea.emailadress_id=t.emailadress_id_id
@@ -301,7 +330,7 @@ INNER JOIN /*Ensuite on refait la même chose en échangeant expediteurs et dest
                     (SELECT ea2.emailadress_id, emp2.employee_id FROM app1_emailadress ea2
                         INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id) ea2 
                         ON ea2.emailadress_id=m.emailadress_id_id 
-                        WHERE m.Timedate > '2001-10-01 00:00:00'
+                        WHERE ( m.Timedate BETWEEN '2000-01-01 00:00:00' AND '2100-01-01 00:00:00')
                 ) m ON t.mail_id_id=m.mail_id
             GROUP BY m.employee_id, t.emailadress_id_id
             ) t ON ea.emailadress_id=t.emailadress_id_id
@@ -311,8 +340,8 @@ ON Tdp.id_expediteur=Tdp2.id_destinataire WHERE Tdp.id_destinataire=Tdp2.id_expe
 GROUP BY employe1_id, employe2_id, nbgauche_droite, nbdroite_gauche ) T
 INNER JOIN app1_employee empg ON empg.employee_id=T.employe1_id /*Ces deux jointures ont pour seul but de récupérer les noms et prénoms des employés à la fin*/
 INNER JOIN app1_employee empd ON empd.employee_id=T.employe2_id
-WHERE T.nbgauche_droite > 0 /* AND T.nbgauche_droite+T.nbdroite_gauche  <= 10 */
-ORDER BY T.nbgauche_droite+T.nbdroite_gauche DESC 
+WHERE T.nbgauche_droite + T.nbdroite_gauche >= 0
+ORDER BY T.nbgauche_droite+T.nbdroite_gauche DESC
 ;
 
 ----Requête n°5----

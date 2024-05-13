@@ -21,18 +21,19 @@
     <body>
         
 
-    <form method="POST" action="req2">{% csrf_token %}
+    <form method="POST" action="req3">{% csrf_token %}
         <div class="rectangle">
-            <p>Nombre de mails :</p>
+            <p>Employé(e) :</p>
             <p>
-                Envoyés : <input type="checkbox" name="envoyes">
-                Reçus : <input type="checkbox" name="recus">
+                Nom : <input type="text" name="nom">
+                Prénom : <input type="text" name="prenom">
             </p>
-            <p>Échanges :</p>
-            <p>
-                Internes : <input type="checkbox" name="interne">
-                Externes : <input type="checkbox" name="externe">
-            </p>
+        </div>
+        <div class="bouton">
+            Liste des employés avec lesquels il ou elle a communiqué :
+            <div>Destinataires <input type="radio" name="nature" value="0"></div>
+            <div>Expéditeurs <input type="radio" name="nature" value="1"></div>
+            <div>Tous <input type="radio" name="nature" value="2"></div>
         </div>
         <p class="rectangle">
             Date de début : <input type="date" name="joura"/>
@@ -41,9 +42,6 @@
         <p class="rectangle">
             Date de fin : <input type="date" name="jourb"/>
             Heure de fin: <input type="time" name="heureb"/>
-        </p>
-        <p class="rectangle">
-            Nombre minimal de mails (compris) : <input type="number" name="minm"/>
         </p>
         
         <div class="envoi"><input type="submit"></div>

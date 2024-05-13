@@ -21,7 +21,16 @@ urlpatterns = [
     path('req1',views.req1,name='req1'),
     
     ##Requête 2##
+    path('form2',views.form2,name='form2'),
     path('req2',views.req2,name='req2'),
+    
+    ##Requête 3##
+    path('form3',views.form3,name='form3'),
+    path('req3',views.req3,name='req3'),
+    
+    ##Requête 4##
+    path('form4',views.form4,name='form4'),
+    path('req4',views.req4,name='req4'),
     
     ##Juste des test##
     path('form',views.form,name='form'),

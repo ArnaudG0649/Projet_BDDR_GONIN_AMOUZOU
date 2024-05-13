@@ -1,0 +1,2 @@
+-Fin de l'implementation des requêtes n°2,3 et 4 sur l'application web.
+-Approfondissement de la requête n°4 dans le fichier sql req4.sql. Le but est de fixer un seul employé dans la première colonne pour avoir le détails du nombre de mails qu'il a échangés avec d'autres employés.
