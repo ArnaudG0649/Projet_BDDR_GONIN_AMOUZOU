@@ -103,6 +103,20 @@ def form4(request) :
 from app1.requetes.Req_4 import req4
 
 
+#### Requête 5 ####
+def form5(request) :
+    return render(request,'form5.html')
+
+from app1.requetes.Req_5 import req5
+
+
+#### Requête 6 ####
+# def form6(request) :
+#     return render(request,'form6.html')
+
+from app1.requetes.Req_6 import req6
+
+
 #### Ouvreur de mail ####
 
 def ouvmail(request,capture) : 

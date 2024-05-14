@@ -32,6 +32,14 @@ urlpatterns = [
     path('form4',views.form4,name='form4'),
     path('req4',views.req4,name='req4'),
     
+    ##Requête 5##
+    path('form5',views.form5,name='form5'),
+    path('req5',views.req5,name='req5'),
+    
+    ##Requête 6##
+    # path('form6',views.form6,name='form6'),
+    path('req6',views.req6,name='req6'),    
+    
     ##Juste des test##
     path('form',views.form,name='form'),
     path('URL_de_reception',views.URL_de_reception,name='URL_de_reception')

@@ -346,32 +346,70 @@ ORDER BY T.nbgauche_droite+T.nbdroite_gauche DESC
 
 ----Requête n°5----
 
-/* SELECT COUNT(mail_id) FROM */
-
-SELECT COUNT(T.mail_id) FROM (
-SELECT m.mail_id, m.subject, m.emailadress_id_id, t.dest_interne, aut.interne as exp_interne FROM app1_mail m 
-    INNER JOIN 
-    (SELECT t.mail_id_id, bool_and(ea.interne) as dest_interne FROM app1_to t
-    INNER JOIN app1_emailadress ea ON ea.emailadress_id=t.emailadress_id_id 
-    GROUP BY t.mail_id_id
-    ) t ON t.mail_id_id=m.mail_id
-    INNER JOIN app1_emailadress aut ON aut.emailadress_id=m.emailadress_id_id
-    WHERE (m.Timedate BETWEEN '2001-10-01 00:00:00' AND '2001-10-02 00:00:00') AND ((aut.interne=True AND t.dest_interne=false) OR (aut.interne=False AND t.dest_interne=True)) /*OU exclusive, au soit le destinataire ou soit l'expéditeur est interne mais pas les deux*/
-) T
+SELECT * FROM (
+    SELECT COUNT(T.mail_id) as nb, T.date FROM (
+    SELECT T0.mail_id, DATE_TRUNC('day', m.timedate) as date FROM app1_mail m 
+        LEFT JOIN /*Ce LEFT JOIN a pour but de compter "0" les jours où il n'y a pas de mails correspondant à la condition sur les interners ou les externes*/
+        (SELECT m.mail_id, m.timedate FROM app1_mail m 
+            INNER JOIN 
+            (SELECT t.mail_id_id, bool_and(ea.interne) as dest_interne FROM app1_to t
+            INNER JOIN app1_emailadress ea ON ea.emailadress_id=t.emailadress_id_id 
+            GROUP BY t.mail_id_id
+            ) t ON t.mail_id_id=m.mail_id
+            INNER JOIN app1_emailadress aut ON aut.emailadress_id=m.emailadress_id_id
+            WHERE aut.interne=True AND t.dest_interne=True )T0 on T0.mail_id=m.mail_id ) T
+    GROUP BY T.date ) T2
+WHERE T2.date BETWEEN '2001-01-01 00:00:00' AND '2100-01-01 00:00:00'
+ORDER BY T2.nb DESC
 ;
 
-SELECT COUNT(T.mail_id) FROM (
-SELECT m.mail_id, m.subject, m.emailadress_id_id, t.dest_interne, aut.interne as exp_interne FROM app1_mail m 
-    INNER JOIN 
-    (SELECT t.mail_id_id, bool_and(ea.interne) as dest_interne FROM app1_to t
-    INNER JOIN app1_emailadress ea ON ea.emailadress_id=t.emailadress_id_id 
-    GROUP BY t.mail_id_id
-    ) t ON t.mail_id_id=m.mail_id
-    INNER JOIN app1_emailadress aut ON aut.emailadress_id=m.emailadress_id_id
-    WHERE (m.Timedate BETWEEN '2001-10-01 00:00:00' AND '2001-10-02 00:00:00') AND (aut.interne=True AND t.dest_interne=True) 
-) T
+SELECT * FROM (
+    SELECT COUNT(T.mail_id) as nb, T.date FROM (
+    SELECT T0.mail_id, DATE_TRUNC('day', m.timedate) as date FROM app1_mail m 
+        LEFT JOIN
+        (SELECT m.mail_id, m.timedate FROM app1_mail m 
+            INNER JOIN 
+            (SELECT t.mail_id_id, bool_and(ea.interne) as dest_interne FROM app1_to t
+            INNER JOIN app1_emailadress ea ON ea.emailadress_id=t.emailadress_id_id 
+            GROUP BY t.mail_id_id
+            ) t ON t.mail_id_id=m.mail_id
+            INNER JOIN app1_emailadress aut ON aut.emailadress_id=m.emailadress_id_id
+            WHERE (aut.interne=True AND t.dest_interne=false) OR (aut.interne=False AND t.dest_interne=True) )T0 on T0.mail_id=m.mail_id ) T /*OU exclusive, au soit le destinataire ou soit l'expéditeur est interne mais pas les deux*/
+    GROUP BY T.date ) T2
+WHERE T2.date BETWEEN '2001-01-01 00:00:00' AND '2100-01-01 00:00:00'
+ORDER BY T2.nb DESC
 ;
 
+/*Deux cas*/
+SELECT INT_EXT.date, INT_EXT.nbint_ext as nbint_ext, INT_INT.nbint_int as nbint_int, INT_EXT.nbint_ext + INT_INT.nbint_int as Total FROM (
+SELECT COUNT(T.mail_id) as nbint_ext, T.date FROM (
+    SELECT T0.mail_id, DATE_TRUNC('day', m.timedate) as date FROM app1_mail m 
+        LEFT JOIN
+        (SELECT m.mail_id, m.timedate FROM app1_mail m 
+            INNER JOIN 
+            (SELECT t.mail_id_id, bool_and(ea.interne) as dest_interne FROM app1_to t
+            INNER JOIN app1_emailadress ea ON ea.emailadress_id=t.emailadress_id_id 
+            GROUP BY t.mail_id_id
+            ) t ON t.mail_id_id=m.mail_id
+            INNER JOIN app1_emailadress aut ON aut.emailadress_id=m.emailadress_id_id
+            WHERE (aut.interne=True AND t.dest_interne=false) OR (aut.interne=False AND t.dest_interne=True) )T0 on T0.mail_id=m.mail_id ) T
+    GROUP BY T.date ) INT_EXT
+INNER JOIN (
+SELECT COUNT(T.mail_id) as nbint_int, T.date FROM (
+    SELECT T0.mail_id, DATE_TRUNC('day', m.timedate) as date FROM app1_mail m 
+        LEFT JOIN
+        (SELECT m.mail_id, m.timedate FROM app1_mail m 
+            INNER JOIN 
+            (SELECT t.mail_id_id, bool_and(ea.interne) as dest_interne FROM app1_to t
+            INNER JOIN app1_emailadress ea ON ea.emailadress_id=t.emailadress_id_id 
+            GROUP BY t.mail_id_id
+            ) t ON t.mail_id_id=m.mail_id
+            INNER JOIN app1_emailadress aut ON aut.emailadress_id=m.emailadress_id_id
+            WHERE aut.interne=True AND t.dest_interne=True )T0 on T0.mail_id=m.mail_id ) T
+GROUP BY T.date ) INT_INT ON INT_INT.date = INT_EXT.date
+WHERE INT_EXT.date BETWEEN '2001-01-01 00:00:00' AND '2100-01-01 00:00:00'
+ORDER BY INT_EXT.nbint_ext + INT_INT.nbint_int DESC
+;
 
 
 ----Requête n°6----

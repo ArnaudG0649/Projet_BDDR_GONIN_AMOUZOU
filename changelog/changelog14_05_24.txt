@@ -1,0 +1,4 @@
+-La partie SQL de la requête n°5 a été grandement améliorée. Elle compte maintenant le nombre de mails envoyés chaque jour en faisant le tri entre les mails internes-internes et internes-externes. (requetes.sql)
+-Fin de l'implémentation de la requête n°5 sur l'application web.
+-Début de l'implémentation de la requête n°6. Maintenant il y a une colonne indiquant les lignes des occurences par mot demandé.
+-Une correction a été faite sur le script de peuplement qui fait que maintenant les timedate de la table app1_mail sont aux fuseau horaire de Los Angeles et donc sont exactement les mêmes que dans les mails. Ce changement a été fait sur la base déjà peuplé.

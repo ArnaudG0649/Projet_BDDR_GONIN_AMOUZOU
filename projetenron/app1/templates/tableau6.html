@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html>
+
+  <!-- Les meta-donnees -->
+  <head>
+    <meta charset="utf-8">
+    <title>Le titre</title>
+    <!--<link rel="stylesheet" href="site.css"> -->
+
+    <style>   
+      table.mon_tableau  {
+          border-collapse: collapse;
+      }
+      table.mon_tableau td {
+         border: 1px solid #5555;
+         padding: 0.3em;
+         font-family: "Sans-serif";
+         font-size: 12px;
+      }
+      table.mon_tableau tr:nth-child(even)  {background: #EEE}
+      table.mon_tableau tr:nth-child(odd) {background: #FFF}
+    </style>
+  </head>
+
+  <body> 
+    <h1>Résultat de la requête</h1>
+    <table class="mon_tableau">
+      <tr>
+        {% for j in columns %}
+        <td>{{j}}</td>
+        {% endfor %}
+      </tr>
+        {% for row in L %}
+          <tr>
+          {% for j in row %}
+            {% if forloop.counter == p %}
+              <td> <a href="http://127.0.0.1:7000/app1/maildir{{j}}">{{j}}</a></td>
+            {% else %}
+            <td>{{j}}</td>
+            {% endif %}
+          {% endfor %}
+          </tr>
+        {% endfor %}
+    </table>
+
+
+  </body>
+  
+</html>
+
+

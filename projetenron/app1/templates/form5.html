@@ -1,0 +1,50 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html>
+
+  <!-- Les meta-donnees -->
+  <head>
+    <meta charset="utf-8">
+    <title>Le titre</title>
+    <!--<link rel="stylesheet" href="site.css"> -->
+    <link rel="stylesheet" href="{% static 'monappli/site.css' %}">
+
+    <style>  
+      table.mon_tableau  {
+          border-collapse: collapse;
+      }
+    </style>
+  </head>
+
+    <body>
+        
+
+    <form method="POST" action="req5">{% csrf_token %}
+        <div class="bouton">
+            Caractéristiques des mails :
+            <div>Internes-Internes <input type="radio" name="nature" value="0"></div>
+            <div>Internes-Externes <input type="radio" name="nature" value="1"></div>
+            <div>Les deux <input type="radio" name="nature" value="2"></div>
+        </div>
+        <p class="rectangle">
+            Date de début : <input type="date" name="joura"/>
+        </p>
+        <p class="rectangle">
+            Date de fin : <input type="date" name="jourb"/>
+        </p>
+        <div class="bouton">
+            Classement par :
+            <div>Nombre de mail <input type="radio" name="ordre" value="nb"></div>
+            <div>Date <input type="radio" name="ordre" value="date"></div>
+        </div>
+
+        <div class="envoi"><input type="submit"></div>
+    </form> 
+    
+    
+    </body>
+</html>
+  
+   
