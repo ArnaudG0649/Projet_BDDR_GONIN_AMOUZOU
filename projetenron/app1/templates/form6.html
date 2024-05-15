@@ -1,0 +1,84 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html>
+
+  <!-- Les meta-donnees -->
+  <head>
+    <meta charset="utf-8">
+    <title>Requete 6</title>
+    <!--<link rel="stylesheet" href="site.css"> -->
+    <link rel="stylesheet" href="{% static 'monappli/site.css' %}">
+
+    <style>  
+      table.mon_tableau  {
+          border-collapse: collapse;
+      }
+    </style>
+  </head>
+
+    <body>
+        
+
+    <form method="POST" action="req6">{% csrf_token %}
+        <p class="rectangle">
+            Liste des mots clés* (entré sous la forme "[mot1];[mot2];etc." Exemple : hi;by donnera la recherche des occurences de "hi" et "by") : <input type="text" name="mots" />
+        </p>
+        <p class="rectangle">
+            Précision du chemin d'accès (le résultat rentré [x] donnera /maildir[x]... où ... correspond aux fichiers de mails ou aux autres sous-dossiers) : <input type="text" name="path" />
+        </p>
+        <p class="rectangle">
+            Adresse email de l'auteur : <input type="text" name="emailaut" />
+        </p>
+        <p class="rectangle">
+            Adresse email du destinataire : <input type="text" name="emaildest" />
+        </p>
+        <div class="rectangle">
+            Identité de l'auteur : 
+            <p>Nom : <input type="text" name="nomaut">
+            Prénom : <input type="text" name="prenomaut"></p>
+        </div>
+        <div class="rectangle">
+            Identité du destinataire : 
+            <p>Nom : <input type="text" name="nomdest">
+            Prénom : <input type="text" name="prenomdest"></p>
+        </div>
+        <p class="rectangle">
+            Object : <input type="text" name="subject" />
+        </p>
+        <p class="rectangle">
+            Date de début : <input type="date" name="joura"/>
+            Heure de début : <input type="time" name="heurea"/>
+        </p>
+        <p class="rectangle">
+            Date de fin : <input type="date" name="jourb"/>
+            Heure de fin: <input type="time" name="heureb"/>
+        </p>
+        <div class="rectangle">
+            Nature des auteurs* :
+            <div>Internes <input type="radio" name="natautinterne" value="1"></div>
+            <div>Externes <input type="radio" name="natautinterne" value="2"></div>
+            <div>Les deux <input type="radio" name="natautinterne" value="0"></div>
+        </div>
+        <div class="rectangle">
+            Nature des destinataires* :
+            <div>Internes <input type="radio" name="natdestinterne" value="1"></div>
+            <div>Externes <input type="radio" name="natdestinterne" value="2"></div>
+            <div>Les deux <input type="radio" name="natdestinterne" value="0"></div>
+        </div>
+        <p class="rectangle">
+            Afficher uniquement les mails contenant tous les mots demandés: <input type="checkbox" name="Tousresultats">
+        </p>
+        <div class="envoi"><input type="submit"></div>
+    </form> 
+    <p></p>
+    <p></p>
+    <p>* : Obligatoire</p>
+    
+    <p><a href="http://127.0.0.1:7000/Application_Projet/Accueil">Revenir à la page d'accueil</a></p>
+    
+    </body>
+</html>
+  
+   

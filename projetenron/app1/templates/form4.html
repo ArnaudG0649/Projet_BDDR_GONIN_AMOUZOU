@@ -7,7 +7,7 @@
   <!-- Les meta-donnees -->
   <head>
     <meta charset="utf-8">
-    <title>Le titre</title>
+    <title>Requete 4</title>
     <!--<link rel="stylesheet" href="site.css"> -->
     <link rel="stylesheet" href="{% static 'monappli/site.css' %}">
 
@@ -24,8 +24,8 @@
     <form method="POST" action="req4">{% csrf_token %}
         <div class="bouton">
             Classement des résultats :
-            <div>Nombre de mails que l'employé A (à gauche) a envoyé <input type="radio" name="nature" value="0"></div>
-            <div>Nombre de mails que l'employé A  a reçu <input type="radio" name="nature" value="1"></div>
+            <div>Nombre de mails que l'employé A (à gauche) a envoyés <input type="radio" name="nature" value="0"></div>
+            <div>Nombre de mails que l'employé A  a reçus <input type="radio" name="nature" value="1"></div>
             <div>Total avec nombre de mails envoyés et reçus <input type="radio" name="nature" value="2"></div>
         </div>
         <p class="rectangle">
@@ -50,6 +50,7 @@
         <div class="envoi"><input type="submit"></div>
     </form> 
     
+    <p><a href="http://127.0.0.1:7000/Application_Projet/Accueil">Revenir à la page d'accueil</a></p>
     
     </body>
 </html>

@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import pandas as pds
 import numpy as np
 from django.shortcuts import render
+from django.http import HttpResponse
 
 #'django_extensions' ##Pour éxecuter la commande au projet
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'projetenron.settings') 
@@ -36,7 +37,12 @@ def req5(request) :
     jourb=rP["jourb"]
     
     datetimea=joura
-    datetimeb=jourb  
+    datetimeb=jourb
+    
+    Criteres=f"Période entre {datetimea} et {datetimeb}"
+    Criteres+=", Échanges internes-internes"*(nature=="0")+", Échanges internes-externes"*(nature=="1")
+    Criteres+=", Classement par dates"*(ordre!="nb")+", Classement par nombre de mails"*(ordre=="nb")
+    
     if ordre=="nb" :
         if nature=="0" : 
             with connection.cursor() as cursor:
@@ -205,19 +211,33 @@ def req5(request) :
                 result=cursor.fetchall()
                 columns = ["Date","Nombre de mails internes-externes échangés","Nombre de mails internes-internes échangés", "Total"]
 
+    if result==[] : 
+        return HttpResponse("""<p>Aucun résultat trouvé</p>
+                            <p><a href="http://127.0.0.1:7000/Application_Projet/Formulaire5">Revenir au formulaire de la requête 5</a></p>
+                            <p><a href="http://127.0.0.1:7000/Application_Projet/Accueil">Revenir à la page d'accueil</a></p>
+                            """)
 
     def foncformat(t) : return str(t)[0:10]
 
     tableau=pds.DataFrame(result,columns=columns)
+    
+    M=np.asarray(tableau)
+    plt.bar(M[:,0],M[:,-1])
+    plt.xticks(fontsize=6)
+    plt.title("Diagramme en baton des quantités de mails échangés par jour")
+    plt.xlabel('Date')
+    plt.ylabel('Nombre (total) de mails')
+    plt.savefig('./app1/static/Schema.png')#,dpi=300)
+    
     tableau["Date"]=tableau["Date"].apply(foncformat)
     nrow=tableau.shape[0]
     M=np.asarray(tableau)
     ntableau=[list(M[i,:]) for i in range(nrow)]
-    return render(request,'tableau.html',
+    return render(request,'tableau5.html',
         {
             'columns' : tableau.columns,
             'L' : ntableau,
-                  })
+            'C' : Criteres })
 
 
 

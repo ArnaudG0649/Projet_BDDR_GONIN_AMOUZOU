@@ -7,7 +7,7 @@
   <!-- Les meta-donnees -->
   <head>
     <meta charset="utf-8">
-    <title>Requete 3</title>
+    <title>Requete 7</title>
     <!--<link rel="stylesheet" href="site.css"> -->
     <link rel="stylesheet" href="{% static 'monappli/site.css' %}">
 
@@ -21,19 +21,16 @@
     <body>
         
 
-    <form method="POST" action="req3">{% csrf_token %}
+    <form method="POST" action="req7">{% csrf_token %}
         <div class="rectangle">
-            <p>Employé(e) :</p>
-            <p>
-                Nom : <input type="text" name="nom">
-                Prénom : <input type="text" name="prenom">
-            </p>
+            Identité du premier employé : 
+            <p>Nom : <input type="text" name="nom1">
+            Prénom : <input type="text" name="prenom1"></p>
         </div>
-        <div class="bouton">
-            Liste des employés avec lesquels il ou elle a communiqué :
-            <div>Destinataires <input type="radio" name="nature" value="0"></div>
-            <div>Expéditeurs <input type="radio" name="nature" value="1"></div>
-            <div>Tous <input type="radio" name="nature" value="2"></div>
+        <div class="rectangle">
+            Identité du deuxième employé : 
+            <p>Nom : <input type="text" name="nom2">
+            Prénom : <input type="text" name="prenom2"></p>
         </div>
         <p class="rectangle">
             Date de début : <input type="date" name="joura"/>
@@ -43,12 +40,14 @@
             Date de fin : <input type="date" name="jourb"/>
             Heure de fin: <input type="time" name="heureb"/>
         </p>
-        
+        <p class="rectangle">
+            Object (Rentrer l'object d'un mail pour avoir son contenu et tous les mails qui y répondent, ou laisser rien sinon): <input type="text" name="subject" />
+        </p>
         <div class="envoi"><input type="submit"></div>
     </form> 
-    
-    <p><a href="http://127.0.0.1:7000/Application_Projet/Accueil">Revenir à la page d'accueil</a></p>
 
+    <p><a href="http://127.0.0.1:7000/Application_Projet/Accueil">Revenir à la page d'accueil</a></p>
+    
     </body>
 </html>
   

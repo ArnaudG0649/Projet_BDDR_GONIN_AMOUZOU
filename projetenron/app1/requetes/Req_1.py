@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import pandas as pds
 import numpy as np
 from django.shortcuts import render
+from django.http import HttpResponse
 
 
 #'django_extensions' ##Pour éxecuter la commande au projet
@@ -44,14 +45,16 @@ def req1(request,typerep='') :
         nrow=tableau.shape[0]
         M=np.asarray(tableau)
         ntableau=[list(M[i,:]) for i in range(nrow)]
-        return render(request,'tableau.html',
+        Criteres='Tous les employés'
+        return render(request,'tableau1.html',
             {
                 'columns' : tableau.columns,
                 'L' : ntableau,
-                      })
+                'C' : Criteres   })
     
     elif typerep =='byauthor' :
         prenom,nom=rP['prenom'],rP['nom']
+        Criteres=f"Nom : {nom}, Prénom : {prenom}"
         with connection.cursor() as cursor:
             cursor.execute(
             """
@@ -64,6 +67,12 @@ def req1(request,typerep='') :
             """,[nom,prenom])
             result=cursor.fetchall()
             columns = ['identifiant','nom','prénom','catégorie','boite mail', 'adresses mail'] 
+
+        if result==[] : 
+            return HttpResponse("""<p>Aucun résultat trouvé</p>
+                                <p><a href="http://127.0.0.1:7000/Application_Projet/Formulaire1">Revenir au formulaire de la requête 1</a></p>
+                                <p><a href="http://127.0.0.1:7000/Application_Projet/Accueil">Revenir à la page d'accueil</a></p>
+                                """)
             
         tableau=pds.DataFrame(result,columns=columns)
         tableau['catégorie'].fillna('Inconnue',inplace=True)
@@ -71,14 +80,16 @@ def req1(request,typerep='') :
         nrow=tableau.shape[0]
         M=np.asarray(tableau)
         ntableau=[list(M[i,:]) for i in range(nrow)]
-        return render(request,'tableau.html',
+        return render(request,'tableau1.html',
             {
                 'columns' : tableau.columns,
                 'L' : ntableau,
-                      })
+                'C' : Criteres })
 
     else : 
         adresse=rP['adresse']
+        Criteres=f"Adresse mail : {adresse}"
+        
         with connection.cursor() as cursor:
             cursor.execute(
             """
@@ -94,18 +105,24 @@ def req1(request,typerep='') :
             """,[adresse])
             result=cursor.fetchall()
             columns = ['identifiant','nom','prénom','catégorie','boite mail', 'adresses mail'] 
-            
+        
+        if result==[] : 
+            return HttpResponse("""<p>Aucun résultat trouvé</p>
+                                <p><a href="http://127.0.0.1:7000/Application_Projet/Formulaire1">Revenir au formulaire de la requête 1</a></p>
+                                <p><a href="http://127.0.0.1:7000/Application_Projet/Accueil">Revenir à la page d'accueil</a></p>
+                                """)
+        
         tableau=pds.DataFrame(result,columns=columns)
         tableau['catégorie'].fillna('Inconnue',inplace=True)
         
         nrow=tableau.shape[0]
         M=np.asarray(tableau)
         ntableau=[list(M[i,:]) for i in range(nrow)]
-        return render(request,'tableau.html',
+        return render(request,'tableau1.html',
             {
                 'columns' : tableau.columns,
                 'L' : ntableau,
-                      })
+                'C' : Criteres })
 
 
 

@@ -16,7 +16,7 @@ from app1.models import Employee,Emailadress,Mail,To,Cc
 
 
 def home(request):
-    return HttpResponse("<p>Cette vue est une page d'accueil basique pour l'application <code>app1</code> de mon projet.</p>")
+    return render(request,"Accueil.html")
 
 def help(request):
     response = HttpResponse()
@@ -73,7 +73,6 @@ def form1(request) :
 
 def form1bis(request) : 
     rP=request.POST
-    print(rP['rep1'])
     if rP['rep1']=='0' : return req1(request,'allemployee')
     if rP['rep1']=='1' : return render(request,'req1/form1employee.html')
     if rP['rep1']=='2' : return render(request,'req1/form1adresse.html')
@@ -111,10 +110,17 @@ from app1.requetes.Req_5 import req5
 
 
 #### Requête 6 ####
-# def form6(request) :
-#     return render(request,'form6.html')
+def form6(request) :
+    return render(request,'form6.html')
 
 from app1.requetes.Req_6 import req6
+
+
+#### Requête 7 ####
+def form7(request) :
+    return render(request,'form7.html')
+
+from app1.requetes.Req_7 import req7
 
 
 #### Ouvreur de mail ####
@@ -122,15 +128,18 @@ from app1.requetes.Req_6 import req6
 def ouvmail(request,capture) : 
     response = HttpResponse()
     path=osp.join(os.getcwd(),'..',capture)
+    k=1
     try : 
         with open(path,"r") as file :
             for ligne in file : 
-                response.write('<p>'+ligne+'</p>')
+                response.write('<p>'+f'{k}|'+ligne+'</p>')
+                k+=1
     except UnicodeDecodeError :
         with open(path,"rb") as file :
             Lignes=str(file.read()).split(r'\n')
             for ligne in Lignes : 
-                response.write('<p>'+ligne+'</p>')
+                response.write('<p>'+f'{k}|'+ligne+'</p>')
+                k+=1
     return response
     
 #### Test pour les formulaires ####
@@ -139,7 +148,7 @@ def form(request) :
 
 def URL_de_reception(request) : 
     rP=request.POST
-    print("Mathieu" in rP)
+    print(rP["mon entier"])
     response = HttpResponse()
     response.write(f"<p>{rP}</p>")
     return response

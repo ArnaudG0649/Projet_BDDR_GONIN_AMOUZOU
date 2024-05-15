@@ -46,7 +46,6 @@ def req4(request) :
     
     nomprenom = prenom!="" and nom!=""
     
-    print(nomprenom)
     if ((prenom!="") or (nom!="")) and not nomprenom : return HttpResponse("<p>Veuillez rentrer entièrement le nom et le prénom ou aucun des deux !</p>")
     
     joura=rP["joura"]
@@ -60,7 +59,12 @@ def req4(request) :
     minm=rP["minm"]
     
     if nomprenom :
-        if nature=="0" : 
+        if nature=="0" :
+            
+            Criteres=f"""
+            Période entre {datetimea} et {datetimeb}, Minimum de mails : {minm}, Nom : {nom}, Prénom : {prenom}, les employés ci-dessous sont ses destinataires
+            """
+            
             with connection.cursor() as cursor:
                 cursor.execute(
                 """
@@ -87,7 +91,12 @@ def req4(request) :
                 columns = ["Nom du destinataire","Prénom du destinataire","Nombre de mails envoyés"]
     
     
-        if nature=="1" : 
+        if nature=="1" :
+            
+            Criteres=f"""
+            Période entre {datetimea} et {datetimeb}, Minimum de mails : {minm}, Nom : {nom}, Prénom : {prenom}, les employés ci-dessous sont ses expéditeurs
+            """
+            
             with connection.cursor() as cursor:
                 cursor.execute(
                 """
@@ -114,7 +123,12 @@ def req4(request) :
                 columns = ["Nom de l'expéditeur","Prénom de l'expéditeur","Nombre de mails reçus"]
    
 
-        if nature=="2" : 
+        if nature=="2" :
+            
+            Criteres=f"""
+            Période entre {datetimea} et {datetimeb}, Minimum de mails : {minm}, Nom : {nom}, Prénom : {prenom}
+            """
+            
             with connection.cursor() as cursor:
                 cursor.execute(
                 """
@@ -160,7 +174,12 @@ def req4(request) :
                 columns = ["Nom","Prénom","Nombre de mails envoyés de cette personne","Nombre de mails reçus de cette personne","Total"]
  
     else : 
-        if nature=="0" : 
+        if nature=="0" :
+            
+            Criteres=f"""
+            Période entre {datetimea} et {datetimeb}, Minimum de mails : {minm}
+            """
+            
             with connection.cursor() as cursor:
                 cursor.execute(
                 """
@@ -182,6 +201,11 @@ def req4(request) :
     
     
         if nature=="1" : 
+            
+            Criteres=f"""
+            Période entre {datetimea} et {datetimeb}, Minimum de mails : {minm}
+            """
+            
             with connection.cursor() as cursor:
                 cursor.execute(
                 """
@@ -202,7 +226,12 @@ def req4(request) :
                 columns = ["Nom de l'expéditeur","Prénom de l'expéditeur","Nom du destinataire","Prénom de destinataire","Nombre de mails envoyés"]
    
 
-        if nature=="2" : 
+        if nature=="2" :
+            
+            Criteres=f"""
+            Période entre {datetimea} et {datetimeb}, Minimum de mails : {minm}
+            """
+            
             with connection.cursor() as cursor:
                 cursor.execute(
                 """
@@ -299,15 +328,28 @@ def req4(request) :
                 result=cursor.fetchall()
                 columns = ["Nom de l'employé(e) 1","Prénom de l'employé(e) 1","Nom l'employé(e) 2","Prénom l'employé(e) 2","Nombre de mails envoyés de 1 à 2","Nombre de mails envoyés de 2 à 1","Total"]   
 
+    if result==[] : 
+        return HttpResponse("""<p>Aucun résultat trouvé</p>
+                            <p><a href="http://127.0.0.1:7000/Application_Projet/Formulaire4">Revenir au formulaire de la requête 4</a></p>
+                            <p><a href="http://127.0.0.1:7000/Application_Projet/Accueil">Revenir à la page d'accueil</a></p>
+                            """)
     
     tableau=pds.DataFrame(result,columns=columns)
+    
+    if nomprenom :
+        M=np.asarray(tableau)
+        plt.pie(M[:,-1],labels=M[:,1]+' '+M[:,0],autopct='%1.1f%%')
+        plt.title("Diagramme en camembert du nombre de mails par employé")
+        plt.savefig('./app1/static/Schema.png')
+    
     nrow=tableau.shape[0]
     M=np.asarray(tableau)
     ntableau=[list(M[i,:]) for i in range(nrow)]
-    return render(request,'tableau.html',
+    return render(request,'tableau4.html',
         {
             'columns' : tableau.columns,
             'L' : ntableau,
-                  })
+            'C' : Criteres,
+            'pie' : nomprenom } )
     
 

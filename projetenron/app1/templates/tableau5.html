@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 
 <html>
@@ -35,17 +37,15 @@
         {% for row in L %}
           <tr>
           {% for j in row %}
-            {% if forloop.counter == p %}
-              <td> <a href="http://127.0.0.1:7000/Application_Projet/maildir{{j}}">{{j}}</a></td>
-            {% else %}
             <td>{{j}}</td>
-            {% endif %}
           {% endfor %}
           </tr>
         {% endfor %}
     </table>
+    <img src="{% static 'Schema.png' %}"/>
 
-    <p><a href="http://127.0.0.1:7000/Application_Projet/Formulaire6">Revenir au formulaire de la requête 6</a></p>
+
+    <p><a href="http://127.0.0.1:7000/Application_Projet/Formulaire5">Revenir au formulaire de la requête 5</a></p>
     <p><a href="http://127.0.0.1:7000/Application_Projet/Accueil">Revenir à la page d'accueil</a></p>
 
   </body>

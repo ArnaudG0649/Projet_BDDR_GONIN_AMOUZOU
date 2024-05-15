@@ -7,7 +7,7 @@
   <!-- Les meta-donnees -->
   <head>
     <meta charset="utf-8">
-    <title>Le titre</title>
+    <title>Requete 2</title>
     <!--<link rel="stylesheet" href="site.css"> -->
     <link rel="stylesheet" href="{% static 'monappli/site.css' %}">
 
@@ -45,10 +45,14 @@
         <p class="rectangle">
             Nombre minimal de mails (compris) : <input type="number" name="minm"/>
         </p>
+        <p class="rectangle">
+            Nombre maximal de mails (compris aussi, rentrez 0 pour négliger cette limite) : <input type="number" name="maxm"/>
+        </p>
         
         <div class="envoi"><input type="submit"></div>
     </form> 
     
+    <p><a href="http://127.0.0.1:7000/Application_Projet/Accueil">Revenir à la page d'accueil</a></p>
     
     </body>
 </html>

@@ -1,0 +1,4 @@
+-Fin de l'implémentation de toutes les requêtes.
+-Mise en place de l'affichage de graphe pour les requêtes 2, 4 (dans le cas où l'on fixe l'employé A) et 5.
+-Création d'une page d'accueil et d'un ensemble d'hyperliens (par exemple pour revenir à l'accueil) sur le site pour pouvoir naviguer.
+-Affichage des critères donnés dans le formulaire sur les pages des résulats des requêtes.

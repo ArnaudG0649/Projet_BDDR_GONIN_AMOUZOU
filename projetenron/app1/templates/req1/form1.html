@@ -7,7 +7,7 @@
   <!-- Les meta-donnees -->
   <head>
     <meta charset="utf-8">
-    <title>Le titre</title>
+    <title>Requete 1</title>
     <!--<link rel="stylesheet" href="site.css"> -->
     <link rel="stylesheet" href="{% static 'monappli/site.css' %}">
 
@@ -21,9 +21,8 @@
     <body>
         
 
-    <form method="POST" action="form1bis">{% csrf_token %}
+    <form method="POST" action="Formulaire1bis">{% csrf_token %}
         <div class="bouton">
-            bouton :
             <div>Tous les employés<input type="radio" name="rep1" value="0"></div>
             <div>Par employé(e) <input type="radio" name="rep1" value="1"></div>
             <div>Par adresse mail <input type="radio" name="rep1" value="2"></div>
@@ -33,6 +32,7 @@
         <div class="envoi"><input type="submit"></div>
     </form> 
     
+    <p><a href="http://127.0.0.1:7000/Application_Projet/Accueil">Revenir à la page d'accueil</a></p>
     
     </body>
 </html>

@@ -47,8 +47,14 @@ def req3(request) :
     
     datetimea=joura+' '+heurea
     datetimeb=jourb+' '+heureb
-
+    
+    
     if nature=="2" : 
+        
+        Criteres=f"""
+        Période entre {datetimea} et {datetimeb}, Nom : {nom}, Prénom : {prenom}, Employés expéditeurs et destinataires
+        """
+        
         with connection.cursor() as cursor:
             cursor.execute(
             """
@@ -81,6 +87,11 @@ def req3(request) :
             columns = ["Nom","Prénom"]
     
     elif nature=="1" : 
+        
+        Criteres=f"""
+        Période entre {datetimea} et {datetimeb}, Nom : {nom}, Prénom : {prenom}, Employés expéditeurs
+        """
+        
         with connection.cursor() as cursor:
             cursor.execute(
             """
@@ -98,7 +109,12 @@ def req3(request) :
             result=cursor.fetchall()
             columns = ["Nom de l'expéditeur","Prénom de l'expéditeur"] 
     
-    elif nature=="0" : 
+    elif nature=="0" :
+        
+        Criteres=f"""
+        Période entre {datetimea} et {datetimeb}, Nom : {nom}, Prénom : {prenom}, Employés expéditeurs
+        """
+        
         with connection.cursor() as cursor:
             cursor.execute(
             """
@@ -114,18 +130,22 @@ def req3(request) :
                 ORDER BY lastname
             """,[nom,prenom,datetimea,datetimeb])
             result=cursor.fetchall()
-            columns = ["Nom de l'expéditeur","Prénom de l'expéditeur"] 
+            columns = ["Nom du destinataire","Prénom du destinataire"] 
 
-    
+    if result==[] : 
+        return HttpResponse("""<p>Aucun résultat trouvé</p>
+                            <p><a href="http://127.0.0.1:7000/Application_Projet/Formulaire3">Revenir au formulaire de la requête 3</a></p>
+                            <p><a href="http://127.0.0.1:7000/Application_Projet/Accueil">Revenir à la page d'accueil</a></p>
+                            """)
     
     tableau=pds.DataFrame(result,columns=columns)
     nrow=tableau.shape[0]
     M=np.asarray(tableau)
     ntableau=[list(M[i,:]) for i in range(nrow)]
-    return render(request,'tableau.html',
+    return render(request,'tableau3.html',
         {
             'columns' : tableau.columns,
             'L' : ntableau,
-                  })
+            'C' : Criteres })
     
 

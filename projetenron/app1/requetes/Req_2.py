@@ -46,14 +46,27 @@ def req2(request) :
     jourb=rP["jourb"]
     heureb=rP["heureb"]
     minm=rP["minm"]
-    
+    maxm=rP["maxm"]
     
     datetimea=joura+' '+heurea
     datetimeb=jourb+' '+heureb
     
+    if maxm=="0" : 
+        maxm="10000000"
+        Criteres=f"""
+        Période entre {datetimea} et {datetimeb}, Minimum : {minm}{envoyes*", Envoyés"}{recus*", Reçus"}{interne*", Internes"}{externe*", Externes"} 
+        """ 
+    else : 
+        Criteres=f"""
+        Période entre {datetimea} et {datetimeb}, Minimum : {minm}, Maximum : {maxm}{envoyes*", Envoyés"}{recus*", Reçus"}{interne*", Internes"}{externe*", Externes"} 
+        """
+    
     
     if LD==[False,False,False,False] : 
-        return HttpResponse("<p>Cochez au moins une case !</p>")
+        return HttpResponse("""<p>Cochez au moins une case !</p>
+                            <p><a href="http://127.0.0.1:7000/Application_Projet/Formulaire2">Revenir au formulaire de la requête 2</a></p>
+                            <p><a href="http://127.0.0.1:7000/Application_Projet/Accueil">Revenir à la page d'accueil</a></p>
+                            """)
     
     #LD=[interne,externe,envoyes,recus] #nombre de mails envoyés
     elif LD==[False,False,True,False] : 
@@ -70,9 +83,9 @@ def req2(request) :
                     WHERE Timedate BETWEEN %s AND %s
                     GROUP BY emp.employee_id
                 ) T
-                WHERE nbmail >= %s
+                WHERE nbmail BETWEEN %s AND %s
                 ORDER BY nbmail DESC
-            """,[datetimea,datetimeb,minm])
+            """,[datetimea,datetimeb,minm,maxm])
             result=cursor.fetchall()
             columns = ['nom','prénom','nombre de mails envoyés'] 
     
@@ -94,9 +107,9 @@ def req2(request) :
                     WHERE Timedate BETWEEN %s AND %s
                     GROUP BY emp.employee_id
                 ) T
-                WHERE nbmail >= %s
+                WHERE nbmail BETWEEN %s AND %s
                 ORDER BY nbmail DESC
-            """,[datetimea,datetimeb,minm])
+            """,[datetimea,datetimeb,minm,maxm])
             result=cursor.fetchall()
             columns = ['nom','prénom','nombre de mails reçus'] 
     
@@ -129,9 +142,9 @@ def req2(request) :
                     GROUP BY emp.employee_id, emp.lastname,emp.firstname
                 ) Rec
                 ON Env.employee_id=Rec.employee_id
-                WHERE Rec.nbrec+Env.nbenv >= %s
+                WHERE Rec.nbrec+Env.nbenv BETWEEN %s AND %s
                 ORDER BY Rec.nbrec+Env.nbenv DESC
-            """,[datetimea,datetimeb,datetimea,datetimeb,minm])
+            """,[datetimea,datetimeb,datetimea,datetimeb,minm,maxm])
             result=cursor.fetchall()
             columns = ['nom','prénom','nombre de mails envoyés','nombre de mails reçus','total']
             
@@ -183,9 +196,9 @@ def req2(request) :
                     GROUP BY emp.employee_id, emp.lastname, emp.firstname
                     ) Rec
                 ON Env.employee_id=Rec.employee_id
-                WHERE Rec.nbrec+Env.nbenv >= %s
+                WHERE Rec.nbrec+Env.nbenv BETWEEN %s AND %s
                 ORDER BY Rec.nbrec+Env.nbenv DESC
-            """,[datetimea,datetimeb,datetimea,datetimeb,minm])
+            """,[datetimea,datetimeb,datetimea,datetimeb,minm,maxm])
             result=cursor.fetchall()
             columns = ['nom','prénom','nombre de mails internes envoyés','nombre de mails internes reçus','total']
     
@@ -238,9 +251,9 @@ def req2(request) :
                     GROUP BY emp.employee_id, emp.lastname, emp.firstname
                     ) Rec
                 ON Env.employee_id=Rec.employee_id
-                WHERE Rec.nbrec+Env.nbenv >= %s
+                WHERE Rec.nbrec+Env.nbenv BETWEEN %s AND %s
                 ORDER BY Rec.nbrec+Env.nbenv DESC
-            """,[datetimea,datetimeb,datetimea,datetimeb,minm])
+            """,[datetimea,datetimeb,datetimea,datetimeb,minm,maxm])
             result=cursor.fetchall()
             columns = ['nom','prénom','nombre de mails internes échangés']
     
@@ -292,9 +305,9 @@ def req2(request) :
                     GROUP BY emp.employee_id, emp.lastname, emp.firstname
                     ) Rec
                 ON Env.employee_id=Rec.employee_id
-                WHERE Rec.nbrec+Env.nbenv >= %s
+                WHERE Rec.nbrec+Env.nbenv BETWEEN %s AND %s
                 ORDER BY Rec.nbrec+Env.nbenv DESC
-            """,[datetimea,datetimeb,datetimea,datetimeb,minm])
+            """,[datetimea,datetimeb,datetimea,datetimeb,minm,maxm])
             result=cursor.fetchall()
             columns = ['nom','prénom','nombre de mails externes envoyés','nombre de mails externes reçus','total']
     
@@ -347,9 +360,9 @@ def req2(request) :
                     GROUP BY emp.employee_id, emp.lastname, emp.firstname
                     ) Rec
                 ON Env.employee_id=Rec.employee_id
-                WHERE Rec.nbrec+Env.nbenv >= %s
+                WHERE Rec.nbrec+Env.nbenv BETWEEN %s AND %s
                 ORDER BY Rec.nbrec+Env.nbenv DESC
-            """,[datetimea,datetimeb,datetimea,datetimeb,minm])
+            """,[datetimea,datetimeb,datetimea,datetimeb,minm,maxm])
             result=cursor.fetchall()
             columns = ['nom','prénom','nombre de mails externes échangés']
     
@@ -404,9 +417,9 @@ def req2(request) :
                     GROUP BY emp.employee_id,emp.lastname,emp.firstname
                 )Te
                 ON Ti.employee_id=Te.employee_id
-                WHERE Ti.nbinterne + Te.nbexterne >= %s
+                WHERE Ti.nbinterne + Te.nbexterne BETWEEN %s AND %s
                 ORDER BY Ti.nbinterne + Te.nbexterne DESC
-            """,[datetimea,datetimeb,datetimea,datetimeb,minm])
+            """,[datetimea,datetimeb,datetimea,datetimeb,minm,maxm])
             result=cursor.fetchall()
             columns = ['nom','prénom','nombre de mails internes envoyés','nombre de mails externes envoyés','total']
             
@@ -457,9 +470,9 @@ def req2(request) :
                 GROUP BY emp.employee_id, emp.lastname, emp.firstname
                 ) Te
                 ON Ti.employee_id=Te.employee_id
-                WHERE Ti.nbinterne + Te.nbexterne >= %s
+                WHERE Ti.nbinterne + Te.nbexterne BETWEEN %s AND %s
                 ORDER BY Ti.nbinterne + Te.nbexterne DESC
-                """,[datetimea,datetimeb,datetimea,datetimeb,minm])
+                """,[datetimea,datetimeb,datetimea,datetimeb,minm,maxm])
             result=cursor.fetchall()
             columns = ['nom','prénom','nombre de mails internes reçus','nombre de mails externes reçus','total']
     
@@ -490,9 +503,9 @@ def req2(request) :
                         ) m
                             ON m.emailadress_id_id=emp.emailadress_id
                         GROUP BY emp.employee_id,emp.lastname,emp.firstname) T
-                WHERE nb >= %s
+                WHERE nb BETWEEN %s AND %s
                 ORDER BY nb DESC
-            """,[datetimea,datetimeb,minm])
+            """,[datetimea,datetimeb,minm,maxm])
             result=cursor.fetchall()
             columns = ['nom','prénom','nombre de mails internes envoyés']
     
@@ -523,9 +536,9 @@ def req2(request) :
                         ) m
                             ON m.emailadress_id_id=emp.emailadress_id
                         GROUP BY emp.employee_id,emp.lastname,emp.firstname) T
-                WHERE nb >= %s
+                WHERE nb BETWEEN %s AND %s
                 ORDER BY nb DESC
-            """,[datetimea,datetimeb,minm])
+            """,[datetimea,datetimeb,minm,maxm])
             result=cursor.fetchall()
             columns = ['nom','prénom','nombre de mails externes envoyés']
     
@@ -555,9 +568,9 @@ def req2(request) :
                     ON t.emailadress_id_id=emp.emailadress_id
                 GROUP BY emp.employee_id, emp.lastname, emp.firstname
                 ) Ti
-                WHERE Ti.nb >= %s
+                WHERE Ti.nb BETWEEN %s AND %s
                 ORDER BY nb DESC
-            """,[datetimea,datetimeb,minm])
+            """,[datetimea,datetimeb,minm,maxm])
             result=cursor.fetchall()
             columns = ['nom','prénom','nombre de mails internes reçus']
     
@@ -587,9 +600,9 @@ def req2(request) :
                     ON t.emailadress_id_id=emp.emailadress_id
                 GROUP BY emp.employee_id, emp.lastname, emp.firstname
                 ) Ti
-                WHERE Ti.nb >= %s
+                WHERE Ti.nb BETWEEN %s AND %s
                 ORDER BY nb DESC
-            """,[datetimea,datetimeb,minm])
+            """,[datetimea,datetimeb,minm,maxm])
             result=cursor.fetchall()
             columns = ['nom','prénom','nombre de mails externes reçus']    
     
@@ -687,9 +700,9 @@ def req2(request) :
                     ) Rec
                 ON Env.employee_id=Rec.employee_id) EXT
             ON INTE.employee_id=EXT.employee_id
-            WHERE INTE.nbenvint + INTE.nbrecint + EXT.nbenvext + EXT.nbrecext >= %s
+            WHERE INTE.nbenvint + INTE.nbrecint + EXT.nbenvext + EXT.nbrecext BETWEEN %s AND %s
             ORDER BY total DESC
-            """,[datetimea,datetimeb,datetimea,datetimeb,datetimea,datetimeb,datetimea,datetimeb,minm])
+            """,[datetimea,datetimeb,datetimea,datetimeb,datetimea,datetimeb,datetimea,datetimeb,minm,maxm])
             result=cursor.fetchall()
             columns = ['nom','prénom','nombre de mails internes échangés','nombre de mails externes échangés','total']   
     
@@ -788,24 +801,33 @@ def req2(request) :
                     ) Rec
                 ON Env.employee_id=Rec.employee_id) EXT
             ON INTE.employee_id=EXT.employee_id
-            WHERE INTE.nbenvint + INTE.nbrecint + EXT.nbenvext + EXT.nbrecext >= %s
+            WHERE INTE.nbenvint + INTE.nbrecint + EXT.nbenvext + EXT.nbrecext BETWEEN %s AND %s
             ORDER BY total DESC
-            """,[datetimea,datetimeb,datetimea,datetimeb,datetimea,datetimeb,datetimea,datetimeb,minm])
+            """,[datetimea,datetimeb,datetimea,datetimeb,datetimea,datetimeb,datetimea,datetimeb,minm,maxm])
             result=cursor.fetchall()
             columns = ['nom','prénom','nombre de mails internes envoyés','nombre de mails internes reçus','nombre de mails externes envoyés','nombre de mails externes reçus','total']    
+        
     
-    
-    
-    
-    
+    if result==[] : 
+        return HttpResponse("""<p>Aucun résultat trouvé</p>
+                            <p><a href="http://127.0.0.1:7000/Application_Projet/Formulaire2">Revenir au formulaire de la requête 2</a></p>
+                            <p><a href="http://127.0.0.1:7000/Application_Projet/Accueil">Revenir à la page d'accueil</a></p>
+                            """)
     tableau=pds.DataFrame(result,columns=columns)
+
+    M=np.asarray(tableau)
+    plt.pie(M[:,-1],labels=M[:,1]+' '+M[:,0],autopct='%1.1f%%')
+    plt.title("Diagramme en camembert du nombre de mails par employé")
+    plt.savefig('./app1/static/Schema.png')
+    
+    
     nrow=tableau.shape[0]
     M=np.asarray(tableau)
     ntableau=[list(M[i,:]) for i in range(nrow)]
-    return render(request,'tableau.html',
+    return render(request,'tableau2.html',
         {
             'columns' : tableau.columns,
             'L' : ntableau,
-                  })
+            'C'  : Criteres   })
     
 

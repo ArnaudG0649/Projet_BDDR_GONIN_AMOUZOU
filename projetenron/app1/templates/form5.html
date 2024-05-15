@@ -7,7 +7,7 @@
   <!-- Les meta-donnees -->
   <head>
     <meta charset="utf-8">
-    <title>Le titre</title>
+    <title>Requete 5</title>
     <!--<link rel="stylesheet" href="site.css"> -->
     <link rel="stylesheet" href="{% static 'monappli/site.css' %}">
 
@@ -24,8 +24,8 @@
     <form method="POST" action="req5">{% csrf_token %}
         <div class="bouton">
             Caractéristiques des mails :
-            <div>Internes-Internes <input type="radio" name="nature" value="0"></div>
-            <div>Internes-Externes <input type="radio" name="nature" value="1"></div>
+            <div>Échanges internes-internes <input type="radio" name="nature" value="0"></div>
+            <div>Échanges internes-externes <input type="radio" name="nature" value="1"></div>
             <div>Les deux <input type="radio" name="nature" value="2"></div>
         </div>
         <p class="rectangle">
@@ -43,6 +43,7 @@
         <div class="envoi"><input type="submit"></div>
     </form> 
     
+    <p><a href="http://127.0.0.1:7000/Application_Projet/Accueil">Revenir à la page d'accueil</a></p>
     
     </body>
 </html>
