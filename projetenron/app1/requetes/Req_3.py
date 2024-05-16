@@ -21,17 +21,6 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from django.db import connection
 
-nature="0"
-
-prenom='Kevin'
-nom='Presto'
-
-joura='2001-01-01'
-heurea='00:00'
-jourb='2100-01-01'
-heureb='00:00'
-
-
 def req3(request) :
     rP=request.POST
     
@@ -47,7 +36,6 @@ def req3(request) :
     
     datetimea=joura+' '+heurea
     datetimeb=jourb+' '+heureb
-    
     
     if nature=="2" : 
         
@@ -146,6 +134,6 @@ def req3(request) :
         {
             'columns' : tableau.columns,
             'L' : ntableau,
-            'C' : Criteres })
+            'C' : Criteres,   
+            'n' : nrow})
     
-

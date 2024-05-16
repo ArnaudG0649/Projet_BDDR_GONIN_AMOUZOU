@@ -21,24 +21,10 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from django.db import connection
 
-#"0" : a->b ; "1" : a<-b ; "2" : a<->b 
-# nature="2"
-
-# prenom='Kevin'
-# nom='Presto'
-
-# nomprenom=True
-
-# joura='2001-01-01'
-# heurea='00:00'
-# jourb='2100-01-01'
-# heureb='00:00'
-
-# minm=0
-
 def req4(request) :
     rP=request.POST
     
+    #"0" : a->b ; "1" : a<-b ; "2" : a<->b 
     nature=rP["nature"]
     
     prenom=rP["prenom"]
@@ -58,7 +44,7 @@ def req4(request) :
     
     minm=rP["minm"]
     
-    if nomprenom :
+    if nomprenom :        
         if nature=="0" :
             
             Criteres=f"""
@@ -338,9 +324,13 @@ def req4(request) :
     
     if nomprenom :
         M=np.asarray(tableau)
-        plt.pie(M[:,-1],labels=M[:,1]+' '+M[:,0],autopct='%1.1f%%')
-        plt.title("Diagramme en camembert du nombre de mails par employé")
-        plt.savefig('./app1/static/Schema.png')
+        AMU=any(M[:,-1]>0) #Au moins un employé a eu un échange.
+        if AMU : 
+            plt.pie(M[:,-1],labels=M[:,1]+' '+M[:,0],autopct='%1.1f%%')
+            plt.title("Diagramme en camembert du nombre de mails par employé")
+            plt.savefig('./app1/static/Schema.png')
+            plt.clf()
+    
     
     nrow=tableau.shape[0]
     M=np.asarray(tableau)
@@ -350,6 +340,7 @@ def req4(request) :
             'columns' : tableau.columns,
             'L' : ntableau,
             'C' : Criteres,
-            'pie' : nomprenom } )
+            'pie' : nomprenom and AMU,
+            'n' : nrow} )
     
 

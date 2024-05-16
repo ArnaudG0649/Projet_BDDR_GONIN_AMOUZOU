@@ -21,19 +21,6 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from django.db import connection
 
-
-# interne=True
-# externe=True
-# envoyes=True
-# recus=True
-
-
-# joura='2001-01-01'
-# heurea='00:00'
-# jourb='2100-01-01'
-# heureb='00:00'
-# minm=1000
-
 def req2(request) :
     rP=request.POST
     interne="interne" in rP
@@ -816,9 +803,12 @@ def req2(request) :
     tableau=pds.DataFrame(result,columns=columns)
 
     M=np.asarray(tableau)
-    plt.pie(M[:,-1],labels=M[:,1]+' '+M[:,0],autopct='%1.1f%%')
-    plt.title("Diagramme en camembert du nombre de mails par employé")
-    plt.savefig('./app1/static/Schema.png')
+    AMU=any(M[:,-1]>0) #Au moins un employé a eu un échange.
+    if AMU :
+        plt.pie(M[:,-1],labels=M[:,1]+' '+M[:,0],autopct='%1.1f%%')
+        plt.title("Diagramme en camembert du nombre de mails par employé")
+        plt.savefig('./app1/static/Schema.png')
+        plt.clf()
     
     
     nrow=tableau.shape[0]
@@ -828,6 +818,8 @@ def req2(request) :
         {
             'columns' : tableau.columns,
             'L' : ntableau,
-            'C'  : Criteres   })
+            'C' : Criteres,   
+            'n' : nrow,
+            'pie' : AMU})
     
 

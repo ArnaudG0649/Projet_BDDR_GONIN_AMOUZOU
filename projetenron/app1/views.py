@@ -148,7 +148,7 @@ def form(request) :
 
 def URL_de_reception(request) : 
     rP=request.POST
-    print(rP["mon entier"])
+    print(rP["pays"]=="espagne",rP["pays2"]=="espagne")
     response = HttpResponse()
     response.write(f"<p>{rP}</p>")
     return response

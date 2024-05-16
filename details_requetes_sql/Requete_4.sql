@@ -1,6 +1,8 @@
 ----Requête n°4----
+
+/*Cette requête compte le nombre de mails que l'employé de gauche à envoyé à l'employé de droite*/
 SELECT * FROM (
-SELECT emp.firstname, emp.lastname, emp2.firstname as firstname_d, emp2.lastname as lastname_d, COUNT(m.mail_id) as nbmail /*Cette requête compte le nombre de mails que l'employé de gauche à envoyé à l'employé de droite*/
+SELECT emp.firstname, emp.lastname, emp2.firstname as firstname_d, emp2.lastname as lastname_d, COUNT(m.mail_id) as nbmail
     FROM app1_employee emp
     INNER JOIN app1_emailadress ea ON emp.employee_id=ea.employee_id_id
     INNER JOIN app1_mail m ON m.emailadress_id_id=ea.emailadress_id
@@ -13,8 +15,9 @@ SELECT emp.firstname, emp.lastname, emp2.firstname as firstname_d, emp2.lastname
     WHERE T.nbmail >= 600
 ;
 
+/*Cette requête compte le nombre de mails que l'employé de droite à envoyé à l'employé de gauche*/
 SELECT * FROM (
-SELECT emp.firstname, emp.lastname, emp2.firstname as firstname_d, emp2.lastname as lastname_d, COUNT(m.mail_id) as nbmail /*Cette requête compte le nombre de mails que l'employé de droite à envoyé à l'employé de gauche*/
+SELECT emp.firstname, emp.lastname, emp2.firstname as firstname_d, emp2.lastname as lastname_d, COUNT(m.mail_id) as nbmail
     FROM app1_employee emp
     INNER JOIN app1_emailadress ea ON emp.employee_id=ea.employee_id_id
     INNER JOIN app1_to t ON t.emailadress_id_id=ea.emailadress_id
@@ -119,68 +122,11 @@ WHERE T.nbgauche_droite + T.nbdroite_gauche >= 0
 ORDER BY T.nbgauche_droite+T.nbdroite_gauche DESC
 ;
 
-----Version où l'on ne garde qu'un seule employé à gauche. Il s'agit en réalité de la requête 3 mais en comptant le nombre de mails échangés
-/*
-/*Liste des employés ayant envoyé un mail à tel*/
-SELECT * FROM (
-SELECT emp.firstname, emp.lastname, COUNT(m.mail_id) as nbmail
-    FROM app1_employee emp
-    INNER JOIN app1_emailadress ea ON emp.employee_id=ea.employee_id_id
-    INNER JOIN app1_mail m ON m.emailadress_id_id=ea.emailadress_id
-    INNER JOIN app1_to t ON t.mail_id_id=m.mail_id
-    INNER JOIN app1_emailadress ea2 ON ea2.emailadress_id=t.emailadress_id_id
-    INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id
-        WHERE emp2.lastname='Presto' AND emp2.firstname='Kevin' AND ( m.Timedate BETWEEN '2000-01-01 00:00:00' AND '2100-01-01 00:00:00')
-    GROUP BY emp.firstname, emp.lastname ) T
-    WHERE nbmail >= 200
-    ORDER BY nbmail DESC 
-;
+----Version où l'on ne garde qu'un seul employé à gauche----
 
-/*Liste des employés ayant reçu un mail de un tel*/
-SELECT * FROM (
-SELECT emp.firstname, emp.lastname, COUNT(m.mail_id) as nbmail
-    FROM app1_employee emp
-    INNER JOIN app1_emailadress ea ON emp.employee_id=ea.employee_id_id
-    INNER JOIN app1_to t ON t.emailadress_id_id=ea.emailadress_id
-    INNER JOIN app1_mail m ON t.mail_id_id=m.mail_id
-    INNER JOIN app1_emailadress ea2 ON ea2.emailadress_id=m.emailadress_id_id
-    INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id
-        WHERE emp2.lastname='Presto' AND emp2.firstname='Kevin' AND ( m.Timedate BETWEEN '2000-01-01 00:00:00' AND '2100-01-01 00:00:00') 
-    GROUP BY emp.firstname, emp.lastname ) T
-    WHERE nbmail >= 200
-    ORDER BY nbmail DESC 
-;
-
-/*Union des deux*/    
-SELECT * FROM (
-    SELECT emp.employee_id, emp.firstname, emp.lastname, COUNT(m.mail_id) as nbrec
-    FROM app1_employee emp
-    INNER JOIN app1_emailadress ea ON emp.employee_id=ea.employee_id_id
-    LEFT JOIN app1_mail m ON m.emailadress_id_id=ea.emailadress_id
-    INNER JOIN app1_to t ON t.mail_id_id=m.mail_id
-    INNER JOIN app1_emailadress ea2 ON ea2.emailadress_id=t.emailadress_id_id
-    INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id
-        WHERE emp2.lastname='Presto' AND emp2.firstname='Kevin' AND ( m.Timedate BETWEEN '2000-01-01 00:00:00' AND '2100-01-01 00:00:00' ) 
-    GROUP BY emp.firstname, emp.lastname
-    ) T1
-    UNION
-SELECT * FROM (
-    SELECT emp.employee_id, emp.firstname, emp.lastname
-    FROM app1_employee emp
-    INNER JOIN app1_emailadress ea ON emp.employee_id=ea.employee_id_id
-    INNER JOIN app1_to t ON t.emailadress_id_id=ea.emailadress_id
-    INNER JOIN app1_mail m ON t.mail_id_id=m.mail_id
-    INNER JOIN app1_emailadress ea2 ON ea2.emailadress_id=m.emailadress_id_id
-    INNER JOIN app1_employee emp2 ON emp2.employee_id=ea2.employee_id_id
-        WHERE emp2.lastname='Presto' AND emp2.firstname='Kevin' AND ( m.Timedate BETWEEN '2000-01-01 00:00:00' AND '2100-01-01 00:00:00') 
-    GROUP BY emp.firstname, emp.lastname
-    ) T2
-    ORDER BY lastname
-; */
-
-
+/*Tous les mails que Kevin Presto a reçus*/
 SELECT * FROM(
-SELECT emp.employee_id, emp.lastname, emp.firstname, COUNT(m.mail_id) as nb FROM /*Tous les mails que Kevin Presto a reçus*/
+SELECT emp.employee_id, emp.lastname, emp.firstname, COUNT(m.mail_id) as nb FROM 
     (SELECT emp.employee_id, emp.lastname, emp.firstname, ea.emailadress_id 
         FROM app1_emailadress ea
         INNER JOIN app1_employee emp ON emp.employee_id=ea.employee_id_id
@@ -198,8 +144,9 @@ SELECT emp.employee_id, emp.lastname, emp.firstname, COUNT(m.mail_id) as nb FROM
     ORDER BY nb DESC) T
 WHERE T.nb >= 100    
 
+/*Tous les mails que Kevin Presto a envoyés*/
 SELECT * FROM(
-SELECT emp.employee_id, emp.lastname, emp.firstname, COUNT(t.mail_id) as nb FROM /*Tous les mails que Kevin Presto a envoyés*/
+SELECT emp.employee_id, emp.lastname, emp.firstname, COUNT(t.mail_id) as nb FROM 
     (SELECT emp.employee_id, emp.lastname, emp.firstname, ea.emailadress_id 
         FROM app1_emailadress ea
         INNER JOIN app1_employee emp ON emp.employee_id=ea.employee_id_id
@@ -217,7 +164,7 @@ SELECT emp.employee_id, emp.lastname, emp.firstname, COUNT(t.mail_id) as nb FROM
     ORDER BY nb DESC) T
 WHERE T.nb >= 100
 
-----Mails reçus et envoyés à Kevin Preston----
+----Mails que Kevin Preston a reçus et envoyés----
 SELECT ENV.lastname, ENV.Firstname, nbenv, nbrec, nbenv+nbrec as total FROM  
     (SELECT emp.employee_id, emp.lastname, emp.firstname, COUNT(t.mail_id) as nbenv FROM /*Tous les mails que Kevin Presto a envoyés*/
     (SELECT emp.employee_id, emp.lastname, emp.firstname, ea.emailadress_id 
@@ -255,8 +202,3 @@ INNER JOIN
     ON ENV.employee_id = REC.employee_id
     WHERE nbenv+nbrec >= 100
     ORDER BY total DESC 
-
-
-
-
-

@@ -20,22 +20,6 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from django.db import connection
 
-# prenom1='Patrice'
-# nom1='Mims'
-
-# prenom2='Debra'
-# nom2='Perlingiere'
-
-# joura='2001-01-01'
-# heurea=''
-# datetimea=joura+' '+heurea
-
-# jourb='2100-01-01'
-# heureb=''
-# datetimeb=jourb+' '+heureb
-
-# subject='CILCO'
-
 def req7(request) :
     rP=request.POST
     
@@ -149,4 +133,5 @@ def req7(request) :
         'columns' : tableau.columns,
         'L' : ntableau,
         'p' : 2,
-        'C' : Criteres })
+        'C' : Criteres,   
+        'n' : nrow})

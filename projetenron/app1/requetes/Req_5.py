@@ -18,15 +18,6 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from django.db import connection
 
-# nature="0"
-# ordre="date"
-
-# joura='2001-01-01'
-# heurea='00:00'
-# jourb='2100-01-01'
-# heureb='00:00'
-
-
 def req5(request) :
     rP=request.POST
     
@@ -222,12 +213,14 @@ def req5(request) :
     tableau=pds.DataFrame(result,columns=columns)
     
     M=np.asarray(tableau)
+
     plt.bar(M[:,0],M[:,-1])
     plt.xticks(fontsize=6)
-    plt.title("Diagramme en baton des quantités de mails échangés par jour")
+    plt.title("Diagramme en bâtons des quantités de mails échangés par jour")
     plt.xlabel('Date')
     plt.ylabel('Nombre (total) de mails')
-    plt.savefig('./app1/static/Schema.png')#,dpi=300)
+    plt.savefig('./app1/static/Schema.png',dpi=200)
+    plt.clf()
     
     tableau["Date"]=tableau["Date"].apply(foncformat)
     nrow=tableau.shape[0]
@@ -237,7 +230,8 @@ def req5(request) :
         {
             'columns' : tableau.columns,
             'L' : ntableau,
-            'C' : Criteres })
+            'C' : Criteres,   
+            'n' : nrow})
 
 
 

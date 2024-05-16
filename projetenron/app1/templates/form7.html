@@ -19,7 +19,7 @@
   </head>
 
     <body>
-        
+        <h2>7. Liste des mails échangés entre deux employés.</h2>
 
     <form method="POST" action="req7">{% csrf_token %}
         <div class="rectangle">
@@ -41,7 +41,7 @@
             Heure de fin: <input type="time" name="heureb"/>
         </p>
         <p class="rectangle">
-            Object (Rentrer l'object d'un mail pour avoir son contenu et tous les mails qui y répondent, ou laisser rien sinon): <input type="text" name="subject" />
+            Objet (Rentrez l'objet d'un mail pour avoir son contenu et tous les mails qui y répondent, ou laissez rien sinon): <input type="text" name="subject" />
         </p>
         <div class="envoi"><input type="submit"></div>
     </form> 

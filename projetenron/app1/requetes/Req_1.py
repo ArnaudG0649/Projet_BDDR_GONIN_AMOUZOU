@@ -50,7 +50,8 @@ def req1(request,typerep='') :
             {
                 'columns' : tableau.columns,
                 'L' : ntableau,
-                'C' : Criteres   })
+                'C' : Criteres,   
+                'n' : nrow})
     
     elif typerep =='byauthor' :
         prenom,nom=rP['prenom'],rP['nom']
@@ -84,7 +85,8 @@ def req1(request,typerep='') :
             {
                 'columns' : tableau.columns,
                 'L' : ntableau,
-                'C' : Criteres })
+                'C' : Criteres,   
+                'n' : nrow})
 
     else : 
         adresse=rP['adresse']
@@ -122,7 +124,8 @@ def req1(request,typerep='') :
             {
                 'columns' : tableau.columns,
                 'L' : ntableau,
-                'C' : Criteres })
+                'C' : Criteres,   
+                'n' : nrow})
 
 
 

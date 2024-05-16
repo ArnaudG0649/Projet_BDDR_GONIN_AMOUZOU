@@ -23,13 +23,22 @@
         <p>Bonjour et bienvenu,</p>
         <p>Cette application a pour but de vous aider à exploiter une base de données de mails issus de boîtes mails de 149 employés importants de l'entreprise Enron avant sa faillite.</p>
         <p>Voici la liste des requêtes que vous pouvez faire pour obtenir des informations sur ces mails :</p>
-        <p><a href="http://127.0.0.1:7000/Application_Projet/Formulaire1">1. Obtenir des informations sur un employé : ces adresses mail, le nom de sa boîte mail et son rôle dans l'entreprise si renseigné.</a></p>
+        <p><a href="http://127.0.0.1:7000/Application_Projet/Formulaire1">1. Obtenir des informations sur un employé : ses adresses mail, le nom de sa boîte mail et son rôle dans l'entreprise si renseigné.</a></p>
         <p><a href="http://127.0.0.1:7000/Application_Projet/Formulaire2">2. Nombre de mails envoyés et reçus par employés.</a></p>
         <p><a href="http://127.0.0.1:7000/Application_Projet/Formulaire3">3. Liste des employés avec lesquels un employé a communiqué.</a></p>
         <p><a href="http://127.0.0.1:7000/Application_Projet/Formulaire4">4. Nombre de mails échangés par couple d'employés.</a></p>
         <p><a href="http://127.0.0.1:7000/Application_Projet/Formulaire5">5. Nombre de mails échangés par jour.</a></p>
-        <p><a href="http://127.0.0.1:7000/Application_Projet/Formulaire6">6. Rechercher des mails par mots-clés présents dedans.</a></p>
+        <p><a href="http://127.0.0.1:7000/Application_Projet/Formulaire6">6. Rechercher des mails par critères (auteur, destinataires, dates, etc.) et/ou mots-clés présents dedans.</a></p>
         <p><a href="http://127.0.0.1:7000/Application_Projet/Formulaire7">7. Liste des mails échangés entre deux employés.</a></p>
+        <p><br></p>
+        <p>Choses à savoir : </p>
+        <p>&emsp;-Si l'auteur est interne, un mail est considéré comme un échange interne-externe lorsque, parmi les destinataires, il y en a au moins un externe à l'entreprise Enron.</p>
+        <p>&emsp;-Dans les requêtes donnant des graphes, le graphe représentera à chaque fois le total des mails (la dernière colonne) par employés ou jour selon la requête et les critères données.<br>
+          Par exemple, si dans la requête n°5 vous souhaitez uniquement le diagramme en bâtons du nombre d'échanges internes-internes par jour, vous précisez bien dans le formulaire que vous souhaitez
+           que les échanges internes-internes et pas les deux types d'échanges. 
+        </p>
+        <p>&emsp;-Lorsque que vous rentrez deux dates pour avoir les résultats sur une période, les dates en question sont comprises dans la période et pas exclues.</p>
+        <p>&emsp;-Lorsque une date vous est demandée vous n'êtes pas obligé de préciser l'heure.</p>
         
 
     

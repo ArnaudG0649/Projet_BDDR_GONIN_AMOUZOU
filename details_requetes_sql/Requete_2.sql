@@ -95,9 +95,6 @@ SELECT T.lastname, T.firstname, T.nb FROM
 
 
 
-
-
-
 ----par mails reçus----
 SELECT lastname,firstname,nbmail FROM
     (SELECT emp.lastname,emp.firstname, COUNT(*) as nbmail   
@@ -189,11 +186,7 @@ SELECT Ti.lastname, Ti.firstname, Ti.nb FROM
 ;
 
 
-
-
-
 ----Mails envoyés et reçus----
-
 
 SELECT Env.lastname, Env.firstname, Env.nbenv, Rec.nbrec, Rec.nbrec+Env.nbenv AS total FROM
     (SELECT emp.employee_id, emp.lastname,emp.firstname, COUNT(m.mail_id) as nbenv   

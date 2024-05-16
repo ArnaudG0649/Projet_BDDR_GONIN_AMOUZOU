@@ -1,0 +1,6 @@
+-La requête n°6 a été renforcée de sorte que maintenant on puisse y mettre des critères concernant les adresses mails en copie et on ne soit plus obligé de mettre des mots-clés.
+-Affichage sur chaque page de résulats du nombre de résultats (lignes) trouvés.
+-Rédaction d'informations à savoir pour l'utilisateur sur la page d'acccueil.
+-Rédaction du manuel d'installation et d'utilisation (README.txt).
+-Correction d'un bug qui rendait l'affichage successif de graphes bizarre.
+-Je considère maintenant l'application comme terminée.

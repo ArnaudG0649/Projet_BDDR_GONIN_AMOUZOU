@@ -19,12 +19,17 @@
   </head>
 
     <body>
-        
+        <h2>6. Rechercher des mails par critères (auteur, destinataires, dates, etc.) et mots-clés présents dedans.</h2>
 
     <form method="POST" action="req6">{% csrf_token %}
-        <p class="rectangle">
-            Liste des mots clés* (entré sous la forme "[mot1];[mot2];etc." Exemple : hi;by donnera la recherche des occurences de "hi" et "by") : <input type="text" name="mots" />
-        </p>
+        <div class="rectangle">
+            <p>
+                Liste des mots clés (entré sous la forme "[mot1];[mot2];etc." Exemple : hi;by donnera la recherche des occurences de "hi" et "by") : <input type="text" name="mots" />
+            </p>
+            <p>
+                Afficher uniquement les mails contenant tous les mots demandés: <input type="checkbox" name="Tousresultats">
+            </p>
+        </div>
         <p class="rectangle">
             Précision du chemin d'accès (le résultat rentré [x] donnera /maildir[x]... où ... correspond aux fichiers de mails ou aux autres sous-dossiers) : <input type="text" name="path" />
         </p>
@@ -33,6 +38,9 @@
         </p>
         <p class="rectangle">
             Adresse email du destinataire : <input type="text" name="emaildest" />
+        </p>
+        <p class="rectangle">
+            Adresse email en copie : <input type="text" name="emailcc" />
         </p>
         <div class="rectangle">
             Identité de l'auteur : 
@@ -43,6 +51,11 @@
             Identité du destinataire : 
             <p>Nom : <input type="text" name="nomdest">
             Prénom : <input type="text" name="prenomdest"></p>
+        </div>
+        <div class="rectangle">
+            Identité de l'employé en copie : 
+            <p>Nom : <input type="text" name="nomcc">
+            Prénom : <input type="text" name="prenomcc"></p>
         </div>
         <p class="rectangle">
             Object : <input type="text" name="subject" />
@@ -67,8 +80,20 @@
             <div>Externes <input type="radio" name="natdestinterne" value="2"></div>
             <div>Les deux <input type="radio" name="natdestinterne" value="0"></div>
         </div>
+        <div class="rectangle">
+            Nature de ceux en copie* :
+            <div>Internes <input type="radio" name="natccinterne" value="1"></div>
+            <div>Externes <input type="radio" name="natccinterne" value="2"></div>
+            <div>Les deux <input type="radio" name="natccinterne" value="0"></div>
+        </div>
         <p class="rectangle">
-            Afficher uniquement les mails contenant tous les mots demandés: <input type="checkbox" name="Tousresultats">
+            Classement par :
+            <select name="order">
+                <option value="path">Chemins d'accés (ordre alphabétique)</option>
+                <option value="date">Dates</option>
+                <option value="subject">Objets (ordre alphabétique)</option>
+                <option value="emailadress">Adresses email (ordre alphabétique)</option>
+            </select>
         </p>
         <div class="envoi"><input type="submit"></div>
     </form> 
