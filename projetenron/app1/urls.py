@@ -3,13 +3,7 @@ from . import views
 
 
 
-urlpatterns = [
-    path('help', views.help, name='help'), 
-    path('home', views.home, name='home'),
-    path('', views.home, name='vide'), 
-    path('extableau',views.extableau,name='extableau'),
-    path('extableau2',views.vextableau2,name='extableau2'),
-    
+urlpatterns = [    
     ##Pour ouvrir un mail##
     re_path(r'^(maildir/.*)$', views.ouvmail, name='ouvmail'),
     
@@ -49,7 +43,4 @@ urlpatterns = [
     path('Formulaire7',views.form7,name='form7'),
     path('req7',views.req7,name='req7'),    
     
-    ##Juste des test##
-    path('form',views.form,name='form'),
-    path('URL_de_reception',views.URL_de_reception,name='URL_de_reception')
 ] 

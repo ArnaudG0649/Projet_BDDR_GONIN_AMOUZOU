@@ -14,55 +14,8 @@ django.setup()
 
 from app1.models import Employee,Emailadress,Mail,To,Cc
 
-
 def home(request):
     return render(request,"Accueil.html")
-
-def help(request):
-    response = HttpResponse()
-    response.write("<h1>Explications</h1>")
-    response.write("<p>Ce site est une ébauche d'une page web crée avec Django dans dans le cadre du projet de l'UE Base de données relationnelles.</p>")
-    response.write("<p>Si vous voyez ce message cela signifie que cet exercice est un succés.</p>")
-    return response
-
-
-
-def tableau(request,tableau) :
-    nrow=tableau.shape[0]
-    M=np.asarray(tableau)
-    ntableau=[[tableau.index[i]]+list(M[i,:]) for i in range(nrow)]
-    return render(request,'Resultat_requete.html',
-        {
-            'index' : tableau.index,
-            'columns' : tableau.columns,
-            'L' : ntableau
-                  })
-    
-def extableau(request) :
-    famille=pds.DataFrame({'maman':[4,1],'papa':[7,9],'enfant':["bonjour","aurevoir"]})
-    return(tableau(request,famille))
-    
-    
-# def extableau2(request) :
-#     tableau=pds.read_csv("recherchemot.csv",index_col=(0))
-#     p=list(tableau.columns).index('path')+2 #rang de la colonne "path"
-#     nrow=tableau.shape[0]
-#     M=np.asarray(tableau)
-#     ntableau=[[tableau.index[i]]+list(M[i,:]) for i in range(nrow)]
-#     return render(request,'extableau2.html',
-#         {
-#             'index' : tableau.index,
-#             'columns' : tableau.columns,
-#             'L' : ntableau,
-#             'p' : p
-#                   })
-
-
-from app1.requetes.reqtest import extableau2
-
-def vextableau2(request) :
-    return extableau2(request)
-
 
 #### Requête 1 ####
 
@@ -141,17 +94,7 @@ def ouvmail(request,capture) :
                 response.write('<p>'+f'{k}|'+ligne+'</p>')
                 k+=1
     return response
-    
-#### Test pour les formulaires ####
-def form(request) : 
-    return render(request,'form.html')
 
-def URL_de_reception(request) : 
-    rP=request.POST
-    print(rP["pays"]=="espagne",rP["pays2"]=="espagne")
-    response = HttpResponse()
-    response.write(f"<p>{rP}</p>")
-    return response
 
 
 
